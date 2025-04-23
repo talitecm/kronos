@@ -1,0 +1,37 @@
+
+{% extends "base-adm.html" %}
+
+{% block conteudo %}
+<div class="admin-container">
+    <div class="top-bar">
+        <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <nav class="admin-nav">
+        <button onclick="showContent('consultar')">Consultar</button>
+        <button onclick="showContent('cadastrar')">Cadastrar Colaborador</button>
+        <button onclick="showContent('editar')">Editar Colaborador</button>
+        <button onclick="showContent('relatorio')">Relatório</button>
+    </nav>
+
+    <section id="content-area" class="content-area">
+        <!-- Conteúdo dinâmico vai aqui -->
+    </section>
+</div>
+
+<script>
+function showContent(page) {
+    const content = {
+        consultar: "<h2>Consultar</h2>",
+        cadastrar: "<h2>Cadastrar Colaborador</h2>",
+        editar: "<h2>Editar Colaborador</h2>",
+        relatorio: "<h2>Relatórios</h2>"
+    };
+    document.getElementById("content-area").innerHTML = content[page] || "";
+}
+
+function logout() {
+    window.location.href = "{{ url_for('login') }}";
+}
+</script>
+{% endblock %}
