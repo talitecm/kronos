@@ -73,12 +73,12 @@ form {
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;
     max-width: 100%;
 }
 
 .form-group {
     display: flex;
+    margin: 25px;
     flex-direction: column;
     flex: 1 1 260px;
     min-width: 180px;
