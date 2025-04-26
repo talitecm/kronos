@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 {% block conteudo %}
-<div class="clock" id="clock">00:00:00</div>
-
-<form class="form-ponto" method="POST" action="/registrar-ponto">
-    <input type="text" name="matricula" placeholder="Digite sua Matrícula" required>
-    <button type="submit">Confirmar</button>
-</form>
+<div class="ponto-container">
+    <div class="nav-home">
+        <button class="login-btn">Login</button>
+    </div>
+    
+    <div class="clock" id="clock">
+        <span class="hours">00</span><span class="separadorg">:</span></span><span class="minutes">00</span><span class="separador">:</span><span class="seconds">00</span>
+    </div>
+    
+    <div class="box-ponto">
+        <form class="form-ponto" method="POST" action="/registrar-ponto">
+            <input type="text" name="matricula" placeholder="Digite sua Matrícula" required>
+            <button type="submit">Confirmar</button>
+        </form>
+    </div>
+</div>
 
 <script>
 function updateClock() {
@@ -13,9 +23,13 @@ function updateClock() {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    
+    document.querySelector('.hours').textContent = hours;
+    document.querySelector('.minutes').textContent = minutes;
+    document.querySelector('.seconds').textContent = seconds;
 }
 setInterval(updateClock, 1000);
 updateClock();
+
 </script>
 {% endblock %}

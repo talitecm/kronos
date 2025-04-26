@@ -24,8 +24,8 @@ lm.init_app(app)                                                                
 
 # Função para carregar o usuário
 @lm.user_loader
-def load_user(email):
-    return Pessoa.query.filter_by(email=email).first()  # Busca o usuário no banco pelo EMAIL // em caso de incompatibilidades Verififcar "Pessoa"
+def load_user(matricula):
+    return Pessoa.query.filter_by(Matricula=matricula).first()  # Busca o usuário no banco pela matricula // em caso de incompatibilidades Verififcar "Pessoa"
 
 @app.route('/')
 def home():

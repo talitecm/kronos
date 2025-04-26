@@ -8,6 +8,32 @@ body, html {
     background: linear-gradient(135deg, #0f1c3f, #1c4f88);
 }
 
+.ponto-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.nav-home{
+    height: 10%;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: start;
+    gap: 4.5rem;
+}
+
+.login-btn {
+    padding: 8px 16px;
+    background-color: #1e81b0;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 .container {
     display: flex;
     height: 100vh;
@@ -31,7 +57,7 @@ body, html {
 
 .logo-box img {
     max-height: 50vh;
-    width: auto;
+    width: 55%;
 }
 
 .slogan {
@@ -107,9 +133,29 @@ body {
 }
 
 .clock {
+    height: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: self-end;
     font-size: 6rem;
     margin-bottom: 2rem;
     font-weight: bold;
+}
+
+.seconds {
+    font-size: 4rem;
+}
+
+.separadorg{
+    margin: 0px 5px 0px;
+}
+.separador{
+    font-size: 4rem;
+    margin: 0px 10px 0px;
+}
+
+.box-ponto{
+    height: 50%;
 }
 
 .form-ponto {
@@ -124,6 +170,7 @@ body {
 }
 
 .form-ponto input {
+        height: 50%;
     padding: 10px 14px;
     border: none;
     border-radius: 5px;

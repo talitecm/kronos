@@ -9,7 +9,6 @@
     <nav class="admin-nav">
         <button onclick="showContent('consultar')">Consultar</button>
         <button onclick="showContent('cadastrar')">Cadastrar Colaborador</button>
-        <button onclick="showContent('editar')">Editar Colaborador</button>
         <button onclick="showContent('relatorio')">Relatório</button>
     </nav>
 
@@ -77,21 +76,13 @@
                             <option value="0">Não</option>
                         </select>
                     </div>
-                    <div class="form-group short">
-                        <label>Ativo?</label>
-                        <select name="ativo">
-                            <option value="">Selecione</option>
-                            <option value="1">Sim</option>
-                            <option value="0">Não</option>
-                        </select>
-                    </div>
                     <div class="form-actions">
                         <button type="submit">Cadastrar</button>
                     </div>
                 </form>
             `,
 
-            editar: `
+            /* editar: `
                 <h2>Editar Colaborador</h2>
                 <form onsubmit="buscarColaborador(event)" class="form-colaborador">
                     <div class="form-group">
@@ -157,7 +148,7 @@
                         <button type="button" onclick="cancelarEdicao()">Cancelar</button>
                     </div>
                 </form>
-            `,
+            `, */
 
             relatorio: "<h2>Relatórios</h2><p>Em breve!</p>"
         };
