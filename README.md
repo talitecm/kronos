@@ -12,8 +12,6 @@ pip install python-dotenv
 
 pip install flask-login
 
-pip freeze > requirements.txt
-
 
 
 # Comando para iniciar Servidor para testes:
@@ -23,6 +21,8 @@ flask run --debug
 
 
 # Comandos para salvar:
+
+pip freeze > requirements.txt
 
 git add .
 
