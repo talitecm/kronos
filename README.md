@@ -1,5 +1,9 @@
 # kronos
 
+# Instalar requirements
+
+pip install -r requirements.txt
+
 # Bibliotecas para instalar:
 
 pip install flask

@@ -92,3 +92,58 @@ body, html {
 .login-form button:hover {
     background-color: #2566b3;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0c2d48, #145da0);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.clock {
+    font-size: 6rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+}
+
+.form-ponto {
+    background-color: rgba(12, 45, 72, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00000050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.form-ponto input {
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 250px;
+    background-color: #e6f1f9;
+    color: #000;
+}
+
+.form-ponto button {
+    background-color: #1e81b0;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.form-ponto button:hover {
+    background-color: #156ea6;
+}
