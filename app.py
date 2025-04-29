@@ -1,18 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash                     # Importando Flask
-from utilidades import *                                                                        # Importando banco de dados.
-from models.tabelas import *                                                                    # importando a classe 
-import os                                                                                       # Biblioteca para ler arquivos como se fosse um "Sistema Operacional"
-from dotenv import load_dotenv                                                                  # Biblioteca para trabalhar com arquivos env
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user     # Biblioteca para gerenciar sessões de Login
-from datetime import datetime                                                                   # Importando uma forma de pegar a data/hora atual
-import pytz                                                                                     # Biblioteca para lidar com fusos horários.
-from rota_adm.adm import adm_blueprint                                                          # Importando o blueprint para rotas de adm.
-from rota_colaborador.colaborador import colaborador_blueprint                                  # Importando o blueprint para rotas de colaborador.
-
+from utilidades import *
+from adm.adm import adm_blueprint                                                          # Importando o blueprint para rotas de adm.
+from ponto.ponto import colaborador_blueprint                                  # Importando o blueprint para rotas de colaborador.
+from login.login import login_blueprint
 app = Flask(__name__)
 
 app.register_blueprint(adm_blueprint)                                                           # Registrando rota adm.
-app.register_blueprint(colaborador_blueprint)                                                   # Registrando rota colaborador.
+app.register_blueprint(colaborador_blueprint)   
+app.register_blueprint(login_blueprint)                                                   # Registrando rota colaborador.
 
 load_dotenv()                                                                                   # Carrega variáveis do nosso arquivo .flaskenv
 
@@ -26,9 +20,3 @@ app.config["SQLALCHEMY_DATABASE_URI"] = conexao                                 
 db.init_app(app)                                                                                # Sinaliza que o banco será gerenciado pelo app
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')                                              # Importando a secret key do flaskenv
 lm.init_app(app)                                                                                # Sinalizando que o loginManager será gerenciado pelo app
-
-
-# Função para carregar o usuário
-@lm.user_loader
-def load_user(matricula):
-    return Pessoa.query.filter_by(Matricula=matricula).first()                                  # Busca o usuário no banco pela matricula // em caso de incompatibilidades Verififcar "Pessoa"

@@ -16,10 +16,10 @@
             </div>
         </div>
         <div class="painel-dir">
-            <form class="login-form" method="get" action="/adm">
+            <form class="login-form" method="post" action="/login">
                 <h2>Login</h2>
-                <input type="text" name="username" placeholder="Usuário" required>
-                <input type="password" name="password" placeholder="Senha" required>
+                <input type="text" name="matricula" placeholder="Matrícula" required autofocus>
+                <input type="password" name="senha" placeholder="Senha" required>
                 <div class="button-container">
                     <button type="submit">Entrar</button>
                 </div>
