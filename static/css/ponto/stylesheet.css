@@ -1,0 +1,116 @@
+/* static/styles.css */
+
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    background-image: url('../../img/bg-ponto.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ponto-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.nav-home {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    align-items: start;
+    gap: 4.5rem;
+}
+
+.login-btn {
+    padding: 8px 16px;
+    background-color: #1e81b0;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.clock {
+    height: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: self-end;
+    font-size: 6rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+}
+
+.seconds {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.separadorg {
+    margin: 0px 5px 0px;
+}
+
+.separador {
+    font-size: 4rem;
+    margin: 0px 10px 0px;
+    margin-bottom: 0.5rem;
+}
+
+.box-ponto {
+    height: 50%;
+}
+
+.form-ponto {
+    background-color: rgba(12, 45, 72, 0.8);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #00000050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.form-ponto input {
+    height: 50%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 250px;
+    background-color: #e6f1f9;
+    color: #000;
+}
+
+.form-ponto button {
+    background-color: #1e81b0;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.form-ponto button:hover {
+    background-color: #156ea6;
+}

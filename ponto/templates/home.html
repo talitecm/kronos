@@ -1,35 +1,41 @@
-{% extends 'base.html' %}
+{% extends 'base-ponto.html' %}
 {% block conteudo %}
 <div class="ponto-container">
     <div class="nav-home">
         <a href="/login"><button class="login-btn">Login</button></a>
     </div>
-    
+
     <div class="clock" id="clock">
-        <span class="hours">00</span><span class="separadorg">:</span></span><span class="minutes">00</span><span class="separador">:</span><span class="seconds">00</span>
+        <span class="hours">00</span><span class="separadorg">:</span></span><span class="minutes">00</span><span
+            class="separador">:</span><span class="seconds">00</span>
     </div>
-    
+
     <div class="box-ponto">
-        <form class="form-ponto" method="POST" action="/registrar-ponto">
+        <form class="form-ponto" method="POST" action="/">
             <input type="text" name="matricula" placeholder="Digite sua Matrícula" required>
             <button type="submit">Confirmar</button>
         </form>
+        <!-- Mensagem de sucesso ou erro -->
+        {% if mensagem %}
+        <p>{{ mensagem }}</p>
+        {% endif %}
     </div>
 </div>
 
 <script>
-function updateClock() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    
-    document.querySelector('.hours').textContent = hours;
-    document.querySelector('.minutes').textContent = minutes;
-    document.querySelector('.seconds').textContent = seconds;
-}
-setInterval(updateClock, 1000);
-updateClock();
+
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        document.querySelector('.hours').textContent = hours;
+        document.querySelector('.minutes').textContent = minutes;
+        document.querySelector('.seconds').textContent = seconds;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
 </script>
 {% endblock %}

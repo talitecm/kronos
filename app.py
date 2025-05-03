@@ -1,11 +1,14 @@
+from flask import *
 from utilidades import *
-from adm.adm import adm_blueprint                                                          # Importando o blueprint para rotas de adm.
-from ponto.ponto import colaborador_blueprint                                  # Importando o blueprint para rotas de colaborador.
-from login.login import login_blueprint
+from adm.adm import adm_blueprint                                                           # Importando o blueprint para rotas de adm.
+from ponto.ponto import ponto_blueprint                                                     # Importando o blueprint para rotas de colaborador.
+from adm.login import login_blueprint
+
+
 app = Flask(__name__)
 
 app.register_blueprint(adm_blueprint)                                                           # Registrando rota adm.
-app.register_blueprint(colaborador_blueprint)   
+app.register_blueprint(ponto_blueprint)   
 app.register_blueprint(login_blueprint)                                                   # Registrando rota colaborador.
 
 load_dotenv()                                                                                   # Carrega variáveis do nosso arquivo .flaskenv

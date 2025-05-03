@@ -85,6 +85,10 @@ form {
     max-width: 320px;
 }
 
+.Cadastro_separador {
+    display: flex;
+}
+
 label {
     font-size: 0.95rem;
     margin-bottom: 0.4rem;

@@ -3,7 +3,8 @@
 {% block conteudo %}
 <div class="admin-container">
     <div class="top-bar">
-        <a href="{{ url_for('login.logout') }}"><button class="logout-btn" onclick="return confirm('Tem certeza que deseja sair?')">Logout</button></a>
+        <a href="{{ url_for('login.logout') }}"><button class="logout-btn"
+                onclick="return confirm('Tem certeza que deseja sair?')">Logout</button></a>
     </div>
 
     <nav class="admin-nav">
@@ -24,10 +25,6 @@
                 <h2>Buscar Colaborador</h2>
                 <form id="form-consultar" class="form-colaborador">
                     <div class="form-group">
-                        <label for="cpf">CPF:</label>
-                        <input type="text" id="cpf" name="cpf" placeholder="Digite o CPF">
-                    </div>
-                    <div class="form-group">
                         <label for="matricula">Matrícula:</label>
                         <input type="text" id="matricula" name="matricula" placeholder="Digite a matrícula">
                     </div>
@@ -35,38 +32,21 @@
                         <button type="button" onclick="consultarColaborador()">Consultar</button>
                     </div>
                 </form>
+                <div id="resultado-consulta"></div>
             `,
 
             cadastrar: `
                 <h2>Cadastrar Colaborador</h2>
                 <form class="form-colaborador">
-                    <div class="form-group">
-                        <label>Nome Completo</label>
-                        <input type="text" name="nome" placeholder="Nome Completo">
-                    </div>
-                    <div class="form-group">
-                        <label>CPF</label>
-                        <input type="text" name="cpf" placeholder="CPF">
-                    </div>
-                    <div class="form-group">
-                        <label>E-mail</label>
-                        <input type="email" name="email" placeholder="E-mail">
-                    </div>
-                    <div class="form-group">
-                        <label>Matrícula</label>
-                        <input type="text" name="matricula" placeholder="Matrícula">
-                    </div>
-                    <div class="form-group short">
-                        <label>Data de Nascimento</label>
-                        <input type="date" name="data_nascimento">
-                    </div>
-                    <div class="form-group short">
-                        <label>Data de Admissão</label>
-                        <input type="date" name="admissao">
-                    </div>
-                    <div class="form-group">
-                        <label>Senha</label>
-                        <input type="password" name="senha" placeholder="Senha (8 caracteres)">
+                    <div class="Cadastro_separador">
+                        <div class="form-group">
+                            <label>Matrícula</label>
+                            <input type="text" name="matricula" placeholder="Matrícula">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome Completo</label>
+                            <input type="text" name="nome" placeholder="Nome Completo">
+                        </div>
                     </div>
                     <div class="form-group short">
                         <label>Administrador?</label>
@@ -75,6 +55,16 @@
                             <option value="1">Sim</option>
                             <option value="0">Não</option>
                         </select>
+                    </div>
+                    <div class="Cadastro_separador">
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="email" name="email" placeholder="E-mail">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" name="senha" placeholder="Senha (8 caracteres)">
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit">Cadastrar</button>
@@ -154,6 +144,38 @@
         };
 
         document.getElementById("content-area").innerHTML = content[page] || "";
+    }
+    function consultarColaborador() {
+        const cpf = document.getElementById("cpf").value.trim();
+        const matricula = document.getElementById("matricula").value.trim();
+
+        fetch("/adm/consultar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ cpf, matricula })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const resultado = document.getElementById("resultado-consulta");
+                if (data.erro) {
+                    resultado.innerHTML = `<p style="color:red;">${data.erro}</p>
+                                   <button onclick="showContent('consultar')">Nova Consulta</button>`;
+                } else {
+                    resultado.innerHTML = `
+                <div class="resultado-box">
+                    <p><strong>Nome:</strong> ${data.nome}</p>
+                    <p><strong>Matrícula:</strong> ${data.matricula}</p>
+                    <button onclick="window.location.href='/adm/editar/${data.matricula}'">Editar</button>
+                    <div class="nova-consulta">
+                        <button onclick="showContent('consultar')">Nova Consulta</button>
+                    </div>
+                </div>
+            `;
+                }
+            })
+            .catch(() => {
+                document.getElementById("resultado-consulta").innerHTML = "<p style='color:red;'>Erro na consulta.</p>";
+            });
     }
 </script>
 

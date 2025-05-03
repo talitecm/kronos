@@ -1,0 +1,15 @@
+{% extends "base-login.html" %}
+
+{% block conteudo %}
+
+<form class="login-form" method="post" action="/login">
+    <h2>Login</h2>
+    <input type="text" name="matricula" placeholder="Matrícula" required autofocus>
+    <input type="password" name="senha" placeholder="Senha" required>
+    <a href="/recuperar_senha" class="link-login">Recuperar Senha</a>
+    <div class="button-container">
+        <button type="submit">Entrar</button>
+    </div>
+</form>
+
+{% endblock %}
