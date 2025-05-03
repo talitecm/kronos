@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for
 from utilidades import *
-from models.tabelas import db, Administrador, Ponto
+from models.tabelas import db, Colaborador, Ponto
 
 ponto_blueprint = Blueprint('ponto', __name__, template_folder='templates', static_folder='static')
 
@@ -14,7 +13,7 @@ def registrar_ponto():
             return render_template("home.html", mensagem="Matrícula não informada.")
 
         # Busca colaborador pelo número de matrícula
-        colaborador = Administrador.query.filter_by(Matricula=matricula, Ativo=True).first()
+        colaborador = Colaborador.query.filter_by(Matricula=matricula, Ativo=True).first()
 
         if not colaborador:
             return render_template("home.html", mensagem="Matrícula não encontrada ou colaborador inativo.")
