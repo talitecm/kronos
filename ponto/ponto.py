@@ -43,7 +43,3 @@ def registrar_ponto():
 
     # Se for GET, apenas retorna o formulário vazio
     return render_template("home.html")
-
-@ponto_blueprint.route('/hora-servidor')
-def hora_servidor():
-    return {'hora': datetime.now().strftime('%Y-%m-%d %H:%M:%S')}

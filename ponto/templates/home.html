@@ -23,49 +23,17 @@
 </div>
 
 <script>
-    function getServerTime() {
-        fetch('/hora-servidor')
-            .then(response => response.json())
-            .then(data => {
-                const serverTime = new Date(data.hora);
-
-                function updateClock() {
-                    serverTime.setSeconds(serverTime.getSeconds() + 1);
-                    const hours = String(serverTime.getHours()).padStart(2, '0');
-                    const minutes = String(serverTime.getMinutes()).padStart(2, '0');
-                    const seconds = String(serverTime.getSeconds()).padStart(2, '0');
-
-                    document.querySelector('.hours').textContent = hours;
-                    document.querySelector('.minutes').textContent = minutes;
-                    document.querySelector('.seconds').textContent = seconds;
-                }
-
-                setInterval(updateClock, 1000);
-                updateClock();
-            })
-            .catch(err => {
-                console.error('Erro ao obter hora do servidor:', err);
-                fallbackToClientTime();
-            });
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        
+        document.querySelector('.hours').textContent = hours;
+        document.querySelector('.minutes').textContent = minutes;
+        document.querySelector('.seconds').textContent = seconds;
     }
-
-    function fallbackToClientTime() {
-        // Relógio padrão do navegador como fallback
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-
-            document.querySelector('.hours').textContent = hours;
-            document.querySelector('.minutes').textContent = minutes;
-            document.querySelector('.seconds').textContent = seconds;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-    }
-
-    // Iniciar com a hora do servidor
-    getServerTime();
+    setInterval(updateClock, 1000);
+    updateClock();
 </script>
 {% endblock %}
