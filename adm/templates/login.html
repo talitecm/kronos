@@ -4,6 +4,18 @@
 
 <form class="login-form" method="post" action="/login">
     <h2>Login</h2>
+    <!-- Área para exibir mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alertas">
+            {% for categoria, mensagem in messages %}
+                <div class="alert alert-{{ categoria }}">
+                    {{ mensagem }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
     <input type="text" name="matricula" placeholder="Matrícula" required autofocus>
     <input type="password" name="senha" placeholder="Senha" required>
     <a href="/recuperar_senha" class="link-login">Recuperar Senha</a>

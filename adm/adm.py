@@ -1,5 +1,5 @@
 from utilidades import *            # Importando todas bibliotecas
-from models.tabelas import *        # Importando tabela "Colaborador" do Banco de dados 
+from models.tabelas import *        # Importando tabelas do Banco de dados 
 
 adm_blueprint = Blueprint('adm', __name__, template_folder='templates')
 
@@ -14,20 +14,20 @@ def consultar_colaborador():
     dados = request.get_json()
     matricula = dados.get('matricula')
 
-    conn = mysql.connector.connect(**config_bd)  # sua configuração de conexão
-    cursor = conn.cursor(dictionary=True)
+    if not matricula:
+        return jsonify({'erro': 'Matrícula vazia.'}), 400
 
-    query = """
-        SELECT nome, matricula, cpf FROM colaborador 
-        WHERE cpf = %s OR matricula = %s
-    """
-    cursor.execute(query, (cpf, matricula))
-    colaborador = cursor.fetchone()
+    logging.info(f"Tentando buscar colaborador com matrícula: {matricula}")
 
-    cursor.close()
-    conn.close()
+    colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
 
     if colaborador:
-        return jsonify(colaborador)
+        logging.info(f"Colaborador encontrado: {colaborador.Nome}")
+        return jsonify({
+            'nome': colaborador.Nome,
+            'matricula': colaborador.Matricula,
+            'ativo': colaborador.Ativo
+        })
     else:
+        logging.warning(f"Colaborador NÃO encontrado com matrícula: {matricula}")
         return jsonify({'erro': 'Colaborador não encontrado.'}), 404

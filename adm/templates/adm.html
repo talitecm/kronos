@@ -25,14 +25,14 @@
                 <h2>Buscar Colaborador</h2>
                 <form id="form-consultar" class="form-colaborador">
                     <div class="form-group">
-                        <label for="matricula">Matrícula:</label>
+                        <label>Matrícula:</label>
                         <input type="text" id="matricula" name="matricula" placeholder="Digite a matrícula">
+                        <div id="resultado-consulta"></div>
                     </div>
-                    <div class="form-actions">
-                        <button type="button" onclick="consultarColaborador()">Consultar</button>
+                    <div class="form-actions">                    
+                        <button type="submit">Consultar</button>
                     </div>
                 </form>
-                <div id="resultado-consulta"></div>
             `,
 
             cadastrar: `
@@ -144,39 +144,40 @@
         };
 
         document.getElementById("content-area").innerHTML = content[page] || "";
-    }
-    function consultarColaborador() {
-        const cpf = document.getElementById("cpf").value.trim();
-        const matricula = document.getElementById("matricula").value.trim();
+            }
+            document.getElementById("content-area").addEventListener("submit", function(e) {
+            e.preventDefault();
 
-        fetch("/adm/consultar", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ cpf, matricula })
-        })
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            fetch("/adm/consultar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
             .then(response => response.json())
-            .then(data => {
-                const resultado = document.getElementById("resultado-consulta");
-                if (data.erro) {
-                    resultado.innerHTML = `<p style="color:red;">${data.erro}</p>
-                                   <button onclick="showContent('consultar')">Nova Consulta</button>`;
+            .then(result => {
+                const resultadoDiv = document.getElementById("resultado-consulta");
+
+                if (result.erro) {
+                    resultadoDiv.innerHTML = `<p style="color:red;">${result.erro}</p>`;
                 } else {
-                    resultado.innerHTML = `
-                <div class="resultado-box">
-                    <p><strong>Nome:</strong> ${data.nome}</p>
-                    <p><strong>Matrícula:</strong> ${data.matricula}</p>
-                    <button onclick="window.location.href='/adm/editar/${data.matricula}'">Editar</button>
-                    <div class="nova-consulta">
-                        <button onclick="showContent('consultar')">Nova Consulta</button>
-                    </div>
-                </div>
-            `;
+                    resultadoDiv.innerHTML = `
+                        <p><strong>Nome:</strong> ${result.nome}</p>
+                        <p><strong>Matrícula:</strong> ${result.matricula}</p>
+                        <p><strong>Ativo:</strong> ${result.ativo ? 'Sim' : 'Não'}</p>
+                    `;
                 }
             })
             .catch(() => {
-                document.getElementById("resultado-consulta").innerHTML = "<p style='color:red;'>Erro na consulta.</p>";
+                document.getElementById("resultado-consulta").innerHTML = "<p style='color:red;'>Erro ao consultar.</p>";
             });
-    }
+        });
 </script>
 
 {% endblock %}

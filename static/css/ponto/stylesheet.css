@@ -115,3 +115,8 @@ html {
 .form-ponto button:hover {
     background-color: #156ea6;
 }
+
+.msg {
+    display: flex;
+    justify-content: center;
+}
