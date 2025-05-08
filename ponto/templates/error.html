@@ -1,0 +1,6 @@
+{% extends 'base-ponto.html' %}
+{% block conteudo %}
+<h1>{{erro}}</h1>
+<p>{{ mensagem }}</p>
+<a href="{{ url_for('ponto.registrar_ponto') }}"><button class="login-btn">Voltar ao início</button></a>
+{% endblock %}

@@ -40,7 +40,30 @@ def logout():
     logout_user()                               # Desloga o usuário da sessão
     return redirect(url_for('login.login'))     # Redireciona para a tela de login
 
-# Rota para Recuperar senha
-@login_blueprint.route('/recuperar_senha')
+@login_blueprint.route('/recuperar_senha', methods=['GET', 'POST'])
 def recuperar_senha():
+    if request.method == 'POST':
+        email = request.form.get('email')
+
+        # Busca administrador pelo e-mail
+        admin = Administrador.query.filter_by(Email=email).first()
+
+        if not admin:
+            flash("E-mail não encontrado.", "danger")
+            return redirect(url_for('login.recuperar_senha'))
+
+        # Gera nova senha temporária
+        nova_senha = gerar_senha_temporaria()
+        admin.Senha = nova_senha  # Atualiza a senha no banco
+        db.session.commit()
+
+        # Mensagem de sucesso
+        flash(f"Sua nova senha é: {nova_senha} (válida por 5 minutos)", "success")
+        return redirect(url_for('login.login'))
+
     return render_template('recuperar_senha.html')
+
+# Função auxiliar para gerar senhas temporárias
+def gerar_senha_temporaria(tamanho=8):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choices(caracteres, k=tamanho))

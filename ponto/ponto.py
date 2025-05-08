@@ -1,7 +1,7 @@
 from utilidades import *
 from models.tabelas import db, Colaborador, Ponto
 
-ponto_blueprint = Blueprint('ponto', __name__, template_folder='templates', static_folder='static')
+ponto_blueprint = Blueprint('ponto', __name__, template_folder='templates')
 
 @ponto_blueprint.route('/', methods=['GET', 'POST'])
 

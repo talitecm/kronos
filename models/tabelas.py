@@ -17,20 +17,30 @@ class Colaborador(db.Model, UserMixin):
     # Relacionamento com a tabela Ponto
     pontos = db.relationship('Ponto', backref='colaborador', lazy=True)
 
+    # Relacionamento com a tabela Adminstrador
+    administrador = db.relationship("Administrador", back_populates="colaborador", uselist=False)
+
 class Administrador(db.Model, UserMixin):
     __tablename__ = 'administrador'
 
-    Matricula = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
+    Matricula = db.Column(
+        db.Integer,
+        db.ForeignKey('colaborador.Matricula'),
+        unique=True,
+        nullable=False,
+        primary_key=True
+    )
     Idadministrador = db.Column(db.String(50), nullable=False)
     Email = db.Column(db.String(80), unique=True, nullable=False)
     Senha = db.Column(db.String(8), nullable=False)
-
 
     def __repr__(self):
         return f"<administrador {self.Matricula}>"
     
     def get_id(self):
         return str(self.Matricula)  # Retorna a matrícula como ID do usuário
+    
+    colaborador = db.relationship("Colaborador", back_populates="administrador")
 
 
 

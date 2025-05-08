@@ -2,8 +2,17 @@
 
 {% block conteudo %}
 
-<form class="login-form" method="post" action="/login">
+<form class="login-form" method="post" action="/recuperar_senha">
     <h2>Recuperar Senha</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alertas">
+            {% for categoria, mensagem in messages %}
+                <div class="alert alert-{{ categoria }}">{{ mensagem }}</div>
+            {% endfor %}
+            </div>
+    {% endif %}
+    {% endwith %}
     <input type="text" name="email" placeholder="Digite seu e-mail" required autofocus>
     <div class="button-container">
         <button type="submit">Confirmar</button>
@@ -11,10 +20,16 @@
 </form>
 
 <script>
-    function exibirAlerta() {
-        alert("A senha foi enviada para o e-mail cadastrado!");
-        return true; // Permite que o formulário seja enviado
-    }
-    </script>
+    document.querySelector('.login-form').addEventListener('submit', function(e) {
+        const email = document.querySelector('input[name="email"]').value.trim();
+        if (!email) {
+            alert("Por favor, digite seu e-mail.");
+            e.preventDefault();
+        } else {
+            // Mostra carregamento
+            document.querySelector('button[type="submit"]').innerText = "Enviando...";
+        }
+    });
+</script>
 
 {% endblock %}

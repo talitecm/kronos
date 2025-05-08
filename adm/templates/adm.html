@@ -34,7 +34,6 @@
                     </div>
                 </form>
             `,
-
             cadastrar: `
                 <h2>Cadastrar Colaborador</h2>
                 <form class="form-colaborador">
@@ -170,7 +169,10 @@
                     resultadoDiv.innerHTML = `
                         <p><strong>Nome:</strong> ${result.nome}</p>
                         <p><strong>Matrícula:</strong> ${result.matricula}</p>
+                        <p><strong>E-mail:</strong> ${result.email || 'N/A'}</p>
+                        <p><strong>Administrador:</strong> ${result.administrador ? 'Sim' : 'Não'}</p>
                         <p><strong>Ativo:</strong> ${result.ativo ? 'Sim' : 'Não'}</p>
+                        <button onclick="editarColaborador('${result.matricula}')">Editar</button>
                     `;
                 }
             })
@@ -178,6 +180,80 @@
                 document.getElementById("resultado-consulta").innerHTML = "<p style='color:red;'>Erro ao consultar.</p>";
             });
         });
+        function editarColaborador(matricula) {
+            fetch(`/adm/editar/${matricula}`)  // ✅ Garanta que é /adm/editar/
+                .then(response => response.json())
+                .then(colaborador => {
+                    const formularioEdicao = `
+                        <h2>Editar Colaborador</h2>
+                        <form id="form-editar-colaborador">
+                            <input type="hidden" name="matricula" value="${colaborador.matricula}">
+                            
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" name="nome" value="${colaborador.nome || ''}">
+                            </div>
+
+                            <div class="form-group short">
+                                <label>Administrador?</label>
+                                <select name="administrador">
+                                    <option value="1" ${colaborador.administrador ? 'selected' : ''}>Sim</option>
+                                    <option value="0" ${!colaborador.administrador ? 'selected' : ''}>Não</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" name="email" value="${colaborador.email || ''}" disabled>
+                            </div>
+
+                            <div class="form-group short">
+                                <label>Ativo?</label>
+                                <select name="ativo">
+                                    <option value="1" ${colaborador.ativo ? 'selected' : ''}>Sim</option>
+                                    <option value="0" ${!colaborador.ativo ? 'selected' : ''}>Não</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit">Salvar Alterações</button>
+                                <button type="button" onclick="showContent('consultar')">Cancelar</button>
+                            </div>
+                        </form>
+                    `;
+                    document.getElementById("content-area").innerHTML = formularioEdicao;
+                })
+                .catch(err => {
+                    console.error("Erro ao buscar dados:", err);
+                    alert("Erro ao carregar os dados do colaborador.");
+                });
+        }
+
+    // Evento de submit para salvar alterações
+    document.addEventListener("submit", function(e) {
+        if (e.target.id === "form-editar-colaborador") {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            fetch("/adm/editar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.sucesso) {
+                    alert("Dados atualizados com sucesso!");
+                    showContent('consultar');
+                } else {
+                    alert("Erro ao atualizar: " + result.erro);
+                }
+            });
+        }
+    });
 </script>
 
 {% endblock %}
