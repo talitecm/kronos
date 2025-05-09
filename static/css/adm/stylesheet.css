@@ -147,3 +147,25 @@ button[type="submit"]:hover,
 button[type="button"]:hover {
     background-color: #156ea6;
 }
+
+.filtro-campos {
+    margin-top: 15px;
+}
+.form-group input[type="date"], .form-group input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.tabela-relatorio {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.tabela-relatorio th, .tabela-relatorio td {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.tabela-relatorio thead {
+    background-color: #f2f2f2;
+}

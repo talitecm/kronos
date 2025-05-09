@@ -3,7 +3,7 @@ from utilidades import *
 class Colaborador(db.Model, UserMixin):
     __tablename__ = 'colaborador'
 
-    Matricula = db.Column(db.Integer, unique=True, nullable=False, primary_key=True)
+    Matricula = db.Column(db.Integer, unique=True, nullable=False, primary_key=True, autoincrement=True)
     Nome = db.Column(db.String(50), nullable=False)
     Ativo = db.Column(db.Boolean)
 
@@ -23,14 +23,8 @@ class Colaborador(db.Model, UserMixin):
 class Administrador(db.Model, UserMixin):
     __tablename__ = 'administrador'
 
-    Matricula = db.Column(
-        db.Integer,
-        db.ForeignKey('colaborador.Matricula'),
-        unique=True,
-        nullable=False,
-        primary_key=True
-    )
-    Idadministrador = db.Column(db.String(50), nullable=False)
+    Matricula = db.Column(db.Integer,db.ForeignKey('colaborador.Matricula'),unique=True,nullable=False,primary_key=True)
+    Idadministrador = db.Column(db.Integer, autoincrement=True, nullable=False)
     Email = db.Column(db.String(80), unique=True, nullable=False)
     Senha = db.Column(db.String(8), nullable=False)
 

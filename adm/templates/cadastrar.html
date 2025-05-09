@@ -1,12 +1,24 @@
 
 {% extends "base-adm.html" %}
 {% block conteudo %}
+
+<!-- Mensagens flash -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="alertas">
+      {% for categoria, mensagem in messages %}
+        <div class="alert alert-{{ categoria }}">{{ mensagem }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
 <h2>Cadastrar Colaborador</h2>
-<form class="form-colaborador">
+<form class="form-colaborador" method="post" action="{{ url_for('adm.salvar_cadastro') }}">
     <div class="Cadastro_separador">
         <div class="form-group">
             <label>Matrícula</label>
-            <input type="text" name="matricula" placeholder="Matrícula">
+            <input type="text" name="matricula" value="{{ proxima_matricula }}" readonly>
         </div>
         <div class="form-group">
             <label>Nome Completo</label>

@@ -1,5 +1,93 @@
 {% extends "base-adm.html" %}
 {% block conteudo %}
-<h2>Relatórios</h2>
-<p>Em breve!</p>
+
+<h2>Relatório de Pontos</h2>
+
+<form method="post" action="{{ url_for('adm.relatorio') }}">
+    <div class="form-group">
+        <label>Matrícula:</label>
+        <input type="text" name="matricula" value="{{ matricula }}" placeholder="Digite a matrícula">
+    </div>
+
+    <div class="form-group">
+        <label>Nome:</label>
+        <input type="text" name="nome" value="{{ nome }}" placeholder="Digite o nome">
+    </div>
+
+    <div class="form-group">
+        <label>Filtrar por:</label>
+        <select name="tipo_filtro" id="tipo_filtro">
+            <option value="">Selecione</option>
+            <option value="periodo" {% if tipo_filtro == 'periodo' %}selected{% endif %}>Por Período</option>
+            <option value="mes" {% if tipo_filtro == 'mes' %}selected{% endif %}>Por Mês</option>
+            <option value="data" {% if tipo_filtro == 'data' %}selected{% endif %}>Por Data</option>
+        </select>
+    </div>
+
+    <!-- Campos que aparecem conforme tipo de filtro -->
+    <div class="filtro-campos">
+        <!-- Por Período -->
+        {% if tipo_filtro == 'periodo' or tipo_filtro == '' %}
+        <div class="form-group">
+            <label>Data Inicial:</label>
+            <input type="date" name="data_inicio" value="{{ data_inicio }}">
+        </div>
+        <div class="form-group">
+            <label>Data Final:</label>
+            <input type="date" name="data_fim" value="{{ data_fim }}">
+        </div>
+        {% endif %}
+
+        <!-- Por Mês -->
+        {% if tipo_filtro == 'mes' or tipo_filtro == '' %}
+        <div class="form-group">
+            <label>Mês:</label>
+            <input type="month" name="mes" value="{{ mes }}">
+        </div>
+        {% endif %}
+
+        <!-- Por Data -->
+        {% if tipo_filtro == 'data' or tipo_filtro == '' %}
+        <div class="form-group">
+            <label>Data Única:</label>
+            <input type="date" name="data" value="{{ data }}">
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Filtrar</button>
+        <a href="{{ url_for('adm.relatorio') }}"><button type="button">Limpar Filtros</button></a>
+        <a href="{{ url_for('adm.relatorio_pdf') }}?matricula={{ matricula }}&nome={{ nome }}&tipo_filtro={{ tipo_filtro }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}&mes={{ mes }}&data={{ data }}" target="_blank">
+            <button type="button">🖨️ Visualizar em PDF</button>
+        </a>
+    </div>
+</form>
+
+<!-- Tabela de registros -->
+{% if pontos %}
+<table class="tabela-relatorio">
+    <thead>
+        <tr>
+            <th>Matrícula</th>
+            <th>Nome</th>
+            <th>Data/Hora</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ponto in pontos %}
+            <tr>
+                <td>{{ ponto.Matricula }}</td>
+                <td>{{ ponto.colaborador.Nome if ponto.colaborador else 'Desconhecido' }}</td>
+                <td>{{ ponto.Data_Hora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                <td>{{ 'Entrada' if ponto.Tipo == '1' else 'Saída' }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Nenhum registro encontrado.</p>
+{% endif %}
+
 {% endblock %}

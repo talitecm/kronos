@@ -1,16 +1,45 @@
 {% extends "base-adm.html" %}
 {% block conteudo %}
+
 <h2>Buscar Colaborador</h2>
 <form id="form-consultar" class="form-colaborador" method="post" action="/adm/consultar">
     <div class="form-group">
         <label>Matrícula:</label>
-        <input type="text" id="matricula" name="matricula" placeholder="Digite a matrícula">
+        <input type="text" id="matricula" name="matricula" placeholder="Digite a matrícula" required>
+            <!-- Mostra mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alertas">
+        {% for categoria, mensagem in messages %}
+            <div class="alert alert-{{ categoria }}">{{ mensagem }}</div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Mostra dados após consulta -->
+    {% if colaborador %}
+    <div class="resultado-box">
+        <p><strong>Nome:</strong> {{ colaborador.Nome }}</p>
+        <p><strong>Matrícula:</strong> {{ colaborador.Matricula }}</p>
+        
+        {% if admin %}
+            <p><strong>E-mail:</strong> {{ admin.Email }}</p>
+        {% else %}
+            <p><strong>E-mail:</strong> N/A</p>
+        {% endif %}
+
+        <p><strong>Administrador:</strong> {{ 'Sim' if admin else 'Não' }}</p>
+        <p><strong>Ativo:</strong> {{ 'Sim' if colaborador.Ativo else 'Não' }}</p>
     </div>
-    <div class="form-actions">                    
+    {% endif %}
+    </div>
+    <div class="form-actions"> 
+        {% if colaborador %}
+        <a href="{{ url_for('adm.editar', matricula=colaborador.Matricula) }}"><button type="button">Editar</button></a>
+        {% endif %}                      
         <button type="submit">Consultar</button>
     </div>
 </form>
-<div id="resultado-consulta">
-    <!-- resultado da consulta será preenchido pelo backend -->
-</div>
+
 {% endblock %}

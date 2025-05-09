@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .pagina-a4 {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            margin: 0 auto;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10mm;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 6px;
+            font-size: 11px;
+        }
+
+        .cabecalho {
+            text-align: center;
+            margin-bottom: 15mm;
+        }
+
+        .rodape {
+            position: fixed;
+            bottom: 10mm;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="pagina-a4">
+        <div class="cabecalho">
+            <h2>Relatório de Pontos</h2>
+
+            <p><strong>Data da geração:</strong> {{ data_atual.strftime('%d/%m/%Y %H:%M') }}</p>
+
+            <table class="tabela-relatorio">
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nome</th>
+                        <th>Data/Hora</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pontos %}
+                        {% for ponto in pontos %}
+                            <tr>
+                                <td>{{ ponto.Matricula }}</td>
+                                <td>{{ ponto.colaborador.Nome if ponto.colaborador else 'Desconhecido' }}</td>
+                                <td>{{ ponto.Data_Hora.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                                <td>{{ 'Entrada' if ponto.Tipo == '1' else 'Saída' }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">Nenhum registro encontrado.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+        <div class="rodape">
+            Relatório gerado em {{ "%d/%m/%Y"|format(datetime.now().day, datetime.now().month, datetime.now().year) }}
+        </div>
+    </div>
+</body>
+</html>
