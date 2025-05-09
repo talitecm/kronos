@@ -1,0 +1,16 @@
+{% extends "base-adm.html" %}
+{% block conteudo %}
+<h2>Buscar Colaborador</h2>
+<form id="form-consultar" class="form-colaborador" method="post" action="/adm/consultar">
+    <div class="form-group">
+        <label>Matrícula:</label>
+        <input type="text" id="matricula" name="matricula" placeholder="Digite a matrícula">
+    </div>
+    <div class="form-actions">                    
+        <button type="submit">Consultar</button>
+    </div>
+</form>
+<div id="resultado-consulta">
+    <!-- resultado da consulta será preenchido pelo backend -->
+</div>
+{% endblock %}

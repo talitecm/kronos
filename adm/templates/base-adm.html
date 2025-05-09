@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,34 @@
     <link rel="shortcut icon" href="../static/img/kronos_favicon.ico" type="image/x-icon">
     <title>Kronos-Administração</title>
 </head>
+
 <body>
     <div class="main-container">
-        {% block conteudo %}
-        {% endblock %}
+        <div class="admin-container">
+            <div class="top-bar">
+                <a href="{{ url_for('login.logout') }}"><button class="logout-btn"
+                        onclick="return confirm('Tem certeza que deseja sair?')">Logout</button></a>
+            </div>
+
+            <nav class="admin-nav">
+                <a href="{{ url_for('adm.consultar') }}"><button>Consultar</button></a>
+                <a href="{{ url_for('adm.cadastrar') }}"><button>Cadastrar Colaborador</button></a>
+                <a href="{{ url_for('adm.editar') }}"><button>Editar Colaborador</button></a>
+                <a href="{{ url_for('adm.relatorio') }}"><button>Relatório</button></a>
+                <!-- <button onclick="showContent('consultar')">Consultar</button>
+                <button onclick="showContent('cadastrar')">Cadastrar Colaborador</button>
+                <button onclick="showContent('relatorio')">Relatório</button> -->
+            </nav>
+
+            <section id="content-area" class="content-area">
+                {% block conteudo %}
+                {% endblock %}
+            </section>
+        </div>
     </div>
     <footer>
-        
+
     </footer>
 </body>
+
 </html>
