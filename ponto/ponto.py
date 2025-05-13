@@ -39,7 +39,8 @@ def registrar_ponto():
         db.session.add(novo_ponto)
         db.session.commit()
 
-        return render_template("home.html", mensagem=mensagem)
+        flash("Ponto registrado com sucesso!", "success")
+        return redirect(url_for('ponto.registrar_ponto'))  # Ou qualquer outra rota GET
 
     # Se for GET, apenas retorna o formulário vazio
     return render_template("home.html")

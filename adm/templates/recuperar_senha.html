@@ -19,17 +19,4 @@
     </div>
 </form>
 
-<script>
-    document.querySelector('.login-form').addEventListener('submit', function(e) {
-        const email = document.querySelector('input[name="email"]').value.trim();
-        if (!email) {
-            alert("Por favor, digite seu e-mail.");
-            e.preventDefault();
-        } else {
-            // Mostra carregamento
-            document.querySelector('button[type="submit"]').innerText = "Enviando...";
-        }
-    });
-</script>
-
 {% endblock %}

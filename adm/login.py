@@ -1,5 +1,5 @@
 from utilidades import *
-from models.tabelas import * # importando a classe 
+from models.tabelas import * # importando as tabelas do banco
 
 login_blueprint = Blueprint('login', __name__, template_folder='templates')
 
@@ -7,6 +7,7 @@ login_blueprint = Blueprint('login', __name__, template_folder='templates')
 @lm.user_loader
 def load_user(matricula):
     return Administrador.query.filter_by(Matricula=matricula).first()
+
 
 @login_blueprint.route('/login', methods=["GET", "POST"])
 def login():
@@ -37,33 +38,39 @@ def login():
 @login_blueprint.route('/logout')
 @login_required
 def logout():
-    logout_user()                               # Desloga o usuário da sessão
-    return redirect(url_for('login.login'))     # Redireciona para a tela de login
+    logout_user()                                         # Desloga o usuário da sessão
+    return redirect(url_for('ponto.registrar_ponto'))     # Redireciona para a tela de login
+
+def gerar_senha_temporaria(tamanho=8):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choices(caracteres, k=tamanho))
 
 @login_blueprint.route('/recuperar_senha', methods=['GET', 'POST'])
 def recuperar_senha():
+    from app import mail
+    
     if request.method == 'POST':
         email = request.form.get('email')
 
-        # Busca administrador pelo e-mail
         admin = Administrador.query.filter_by(Email=email).first()
 
         if not admin:
             flash("E-mail não encontrado.", "danger")
             return redirect(url_for('login.recuperar_senha'))
 
-        # Gera nova senha temporária
         nova_senha = gerar_senha_temporaria()
-        admin.Senha = nova_senha  # Atualiza a senha no banco
+        admin.Senha = nova_senha
         db.session.commit()
 
-        # Mensagem de sucesso
-        flash(f"Sua nova senha é: {nova_senha} (válida por 5 minutos)", "success")
+        # ✉️ Enviar e-mail com a nova senha
+        msg = Message(
+            subject="Recuperação de Senha - Sistema de Ponto",
+            recipients=[email],
+            body=f"Olá {admin.colaborador.Nome}, sua nova senha é: {nova_senha}\n\nPor favor, faça login e altere-a para uma senha segura."
+        )
+        mail.send(msg)
+
+        flash("Foi enviado um e-mail com sua nova senha.", "success")
         return redirect(url_for('login.login'))
 
     return render_template('recuperar_senha.html')
-
-# Função auxiliar para gerar senhas temporárias
-def gerar_senha_temporaria(tamanho=8):
-    caracteres = string.ascii_letters + string.digits
-    return ''.join(random.choices(caracteres, k=tamanho))

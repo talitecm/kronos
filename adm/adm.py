@@ -3,6 +3,10 @@ from models.tabelas import *        # Importando tabelas do Banco de dados
 
 adm_blueprint = Blueprint('adm', __name__, template_folder='templates')
 
+def gerar_senha_temporaria(tamanho=8):
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choices(caracteres, k=tamanho))
+
 @adm_blueprint.route('/adm')
 @login_required
 def adm():
@@ -29,6 +33,8 @@ def consultar():
 @adm_blueprint.route('/adm/editar/<matricula>', methods=['GET', 'POST'])
 @login_required
 def editar(matricula):
+    from app import mail
+
     colaborador = Colaborador.query.filter_by(Matricula=matricula).first_or_404()
     admin = Administrador.query.filter_by(Matricula=matricula).first()
 
@@ -37,69 +43,43 @@ def editar(matricula):
         administrador_selecionado = request.form.get('administrador') == '1'
         ativo = request.form.get('ativo') == '1'
         email = request.form.get('email')
-        senha = request.form.get('senha')
+        senha = gerar_senha_temporaria()
 
         # Atualiza dados do colaborador
         colaborador.Nome = nome
         colaborador.Ativo = ativo
 
-        if administrador_selecionado and not admin:
-            novo_admin = Administrador(
-                Matricula=colaborador.Matricula,
-                Email=email,
-                Senha=senha
-            )
-            db.session.add(novo_admin)
-        elif not administrador_selecionado and admin:
-            db.session.delete(admin)
-
-        db.session.commit()
-        flash("Dados atualizados com sucesso!", "success")
-        return redirect(url_for('adm.editar', matricula=colaborador.Matricula))
-
-    return render_template('editar.html', colaborador=colaborador, admin=admin)
-
-@adm_blueprint.route('/adm/editar', methods=['POST'])
-@login_required
-def salvar_edicao():
-    dados = request.get_json()
-    matricula = dados.get('matricula')
-
-    colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
-
-    if not colaborador:
-        return jsonify({'erro': 'Colaborador não encontrado.'}), 404
-
-    try:
-        colaborador.Nome = dados.get('nome')
-        colaborador.Ativo = dados.get('ativo') == '1'
-
-        # Se já é administrador
-        admin = Administrador.query.filter_by(Matricula=matricula).first()
-        administrador_selecionado = dados.get('administrador') == '1'
-        email = dados.get('email')
-        senha = dados.get('senha')
-
         if administrador_selecionado:
             if not admin:
+                # Cria novo administrador
                 novo_admin = Administrador(
                     Matricula=colaborador.Matricula,
                     Email=email,
                     Senha=senha
                 )
                 db.session.add(novo_admin)
+                msg = Message(
+                    subject="Kronos - Sistema de Ponto",
+                    recipients=[email],
+                    body=f"Olá {novo_colaborador.Nome}, Atualizamos seu cadastro!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
+                )
+                mail.send(msg)
+
             else:
+                # Atualiza email e, se houver senha, atualiza também
                 admin.Email = email
                 if senha:
                     admin.Senha = senha
-        elif admin:
-            db.session.delete(admin)
+        else:
+            if admin:
+                db.session.delete(admin)
 
         db.session.commit()
-        return jsonify({'sucesso': True})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'erro': str(e)}), 500
+        flash("Dados atualizados com sucesso!", "success")
+        return redirect(url_for('adm.consultar', matricula=colaborador.Matricula))
+
+    return render_template('editar.html', colaborador=colaborador, admin=admin)
+
 
 @adm_blueprint.route('/adm/cadastrar')
 @login_required
@@ -111,11 +91,14 @@ def cadastrar():
 
 @adm_blueprint.route('/salvar_cadastro', methods=['POST'])
 @login_required
+
 def salvar_cadastro():
+    from app import mail
+
     nome = request.form.get('nome')
     administrador = request.form.get('administrador') == '1'
     email = request.form.get('email')
-    senha = request.form.get('senha')
+    senha = gerar_senha_temporaria()
 
     if not nome:
         flash("Nome completo obrigatório.", "danger")
@@ -146,7 +129,15 @@ def salvar_cadastro():
             db.session.add(novo_admin)
 
         db.session.commit()
-        flash(f"Colaborador cadastrado com sucesso! Matrícula: {proxima_matricula}", "success")
+
+        msg = Message(
+            subject="Kronos - Sistema de Ponto",
+            recipients=[email],
+            body=f"Olá {novo_colaborador.Nome}, Seja bem vindo!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
+        )
+        mail.send(msg)
+
+        flash(f"Colaborador cadastrado com sucesso! Matrícula: {proxima_matricula}\n\nEnviamos um novo e-mail para o endereço {email}, informando a matricula e a senha para primeiro acesso do usuário.", "success")
         return redirect(url_for('adm.cadastrar'))
     except Exception as e:
         db.session.rollback()
@@ -156,6 +147,8 @@ def salvar_cadastro():
 @adm_blueprint.route('/adm/relatorio', methods=['GET', 'POST'])
 @login_required
 def relatorio():
+    data_atual = datetime.now()  # ✅ Definida antes de tudo
+
     pontos = []
     matricula = ''
     nome = ''
@@ -173,17 +166,16 @@ def relatorio():
         data_fim = request.form.get('data_fim')
         mes = request.form.get('mes')
         data = request.form.get('data')
+        data_atual = datetime.now()
 
         query = Ponto.query
 
-        # Filtra por colaborador
         if matricula:
             query = query.filter(Ponto.Matricula == matricula)
 
         if nome:
             query = query.join(Colaborador).filter(Colaborador.Nome.like(f"%{nome}%"))
 
-        # Aplica filtro por tipo
         if tipo_filtro == 'mes' and mes:
             try:
                 ano_mes = datetime.strptime(mes, '%Y-%m')
@@ -213,6 +205,7 @@ def relatorio():
                 flash("Datas inválidas.", "danger")
 
         pontos = query.all()
+
     else:
         pontos = Ponto.query.all()
 
@@ -226,13 +219,12 @@ def relatorio():
         data_fim=data_fim,
         mes=mes,
         data=data,
-        data_atual=datetime.now()
+        data_atual=data_atual
     )
 
 @adm_blueprint.route('/relatorio/pdf')
 @login_required
 def relatorio_pdf():
-    # Reaproveita os filtros usados no relatório
     matricula = request.args.get('matricula')
     nome = request.args.get('nome')
     tipo_filtro = request.args.get('tipo_filtro')
@@ -275,9 +267,18 @@ def relatorio_pdf():
 
     pontos = query.all()
 
-    # Renderiza o template para impressão
-    html = render_template("pdf.html", pontos=pontos, matricula=matricula, nome=nome)
+    # ✅ Adicionando data_atual aqui
+    data_atual = datetime.now()
+
+    html = render_template("pdf.html", 
+                           pontos=pontos, 
+                           matricula=matricula, 
+                           nome=nome,
+                           data_atual=data_atual)  # ✅ Incluída no contexto
+
     pdf = HTML(string=html).write_pdf()
 
     return Response(pdf, mimetype='application/pdf',
                     headers={'Content-Disposition': 'inline; filename=relatorio_pontos.pdf'})
+
+
