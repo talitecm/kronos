@@ -27,7 +27,7 @@ dbusuario = os.getenv("DB_USERNAME")                                            
 dbsenha = os.getenv("DB_PASSWORD")                                                              # Importando informação de senha do arquivo env
 host = os.getenv("DB_HOST")                                                                     # Importando informação de host do arquivo env
 meubanco = os.getenv("DB_DATABASE")                                                             # Importando informação de banco de dados do arquivo env
-porta = os.getenv("DB_PORT")                                                                    # importando a informação da porta da conexão do arquivo env
+porta = os.getenv("DB_PORT", "3306")                                                                    # importando a informação da porta da conexão do arquivo env
 conexao = f"mysql+pymysql://{dbusuario}:{dbsenha}@{host}:{porta}/{meubanco}"                    # Formatando a linha de conexão com o banco
 app.config["SQLALCHEMY_DATABASE_URI"] = conexao                                                 # Criando uma "rota" de comunicação
 db.init_app(app)                                                                                # Sinaliza que o banco será gerenciado pelo app

@@ -12,9 +12,19 @@
 <body>
     <div class="main-container">
         <div class="admin-container">
+
             <div class="top-bar">
-                <a href="{{ url_for('login.logout') }}"><button class="logout-btn"
-                        onclick="return confirm('Tem certeza que deseja sair?')">Logout</button></a>
+                <!-- Mensagem centralizada -->
+                {% if current_user.is_authenticated %}
+                    <div class="welcome-wrapper">
+                        <div class="welcome-message">
+                            Seja Bem Vindo <strong>{{ current_user.Nome }}</strong>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Botão à direita -->
+                <a href="{{ url_for('login.logout') }}"><button class="logout-btn" onclick="return confirm('Tem certeza que deseja sair?')">Logout</button></a>
             </div>
 
             <nav class="admin-nav">

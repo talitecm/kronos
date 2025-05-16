@@ -107,10 +107,11 @@ def salvar_cadastro():
         msg = Message(
             subject="Kronos - Sistema de Ponto",
             recipients=[email],
-            body=f"Olá {novo_colaborador.Nome}, Seja bem vindo!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
+            body=f"Olá {novo_colaborador.Nome}, Seja bem vindo!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nhttps://kronos-gestao-do-tempo.onrender.com\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
         )
+
         mail.send(msg)
-        flash(f"Colaborador cadastrado com sucesso!Enviamos um novo e-mail para o endereço {email}, informando a matricula e a senha para primeiro acesso do usuário.", "success")
+        flash(f"Colaborador cadastrado com sucesso! Enviamos um novo e-mail para o endereço {email} informando a matricula e a senha para primeiro acesso do usuário.", "success")
         return redirect(url_for('adm.cadastrar'))
     except Exception as e:
         db.session.rollback()

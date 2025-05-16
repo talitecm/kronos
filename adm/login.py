@@ -106,6 +106,6 @@ def nova_senha():
         db.session.commit()
 
         flash("Senha atualizada com sucesso!", "success")
-        return redirect(url_for('ponto.registrar_ponto'))
+        return redirect(url_for('login.login'))
 
     return render_template('nova_senha.html')

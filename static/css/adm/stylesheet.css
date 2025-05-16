@@ -17,15 +17,30 @@ body {
 
 .top-bar {
     height: 10%;
+    position: relative;
     display: flex;
-    justify-content: flex-end;
     align-items: center;
-    padding: 0 2rem;
     background-color: #0c2d48;
+    justify-content: flex-end;
+}
+
+.welcome-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+    text-align: center;
+}
+
+.welcome-message {
+    color: white;
+    font-size: 1.5vw;
+    font-weight: bold;
 }
 
 .logout-btn {
     padding: 8px 16px;
+    margin: 10px;
     background-color: #1e81b0;
     border: none;
     color: white;

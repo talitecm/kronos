@@ -12,9 +12,14 @@
 
     <div class="box-ponto">
         <form class="form-ponto" method="POST" action="/">
-            <input type="text" name="matricula" placeholder="Digite sua Matrícula" required>
-            <input type="password" name="senha" placeholder="Digite sua Senha" required>
-            <button type="submit">Confirmar</button>
+            <div class="Alinhamento_botoes">
+                <input type="text" name="matricula" class="input-matricula" placeholder="Matrícula" required>
+                <input type="password" name="senha" placeholder="Digite sua Senha" required>
+            </div>
+            <div class="Alinhamento_botoes">
+                <a href="/recuperar_senha" class="link-login">Recuperar Senha</a>
+                <button type="submit">Confirmar</button>
+            </div>
         </form>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

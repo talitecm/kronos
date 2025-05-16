@@ -96,9 +96,14 @@ html {
     border: none;
     border-radius: 5px;
     font-size: 1rem;
-    width: 250px;
+    width: 150px;
     background-color: #e6f1f9;
     color: #000;
+}
+
+.form-ponto .input-matricula {
+    width: 50px; /* ou outro valor menor */
+    font-size: 1rem;
 }
 
 .form-ponto button {
@@ -120,3 +125,19 @@ html {
     display: flex;
     justify-content: center;
 }
+
+.alinhamento_botoes {
+    display: flex;
+    flex-direction: row;
+}
+
+a.link-login {
+    display: inline-block;
+    padding: 10px;
+    margin-right: 10px;
+    color: #4da3ff; /* Azul claro */
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
