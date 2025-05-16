@@ -1,4 +1,14 @@
 {% extends "base-adm.html" %}
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <div class="alertas">
+        {% for categoria, mensagem in messages %}
+            <div class="alert alert-{{ categoria }}">
+                {{ mensagem }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endwith %}
 {% block conteudo %}
 {% endblock %}

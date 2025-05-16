@@ -22,14 +22,8 @@
     <div class="resultado-box">
         <p><strong>Nome:</strong> {{ colaborador.Nome }}</p>
         <p><strong>Matrícula:</strong> {{ colaborador.Matricula }}</p>
-        
-        {% if admin %}
-            <p><strong>E-mail:</strong> {{ admin.Email }}</p>
-        {% else %}
-            <p><strong>E-mail:</strong> N/A</p>
-        {% endif %}
-
-        <p><strong>Administrador:</strong> {{ 'Sim' if admin else 'Não' }}</p>
+        <p><strong>E-mail:</strong> {{ colaborador.Email }}</p>
+        <p><strong>Administrador:</strong> {{ 'Sim' if colaborador.Administrador else 'Não' }}</p>
         <p><strong>Ativo:</strong> {{ 'Sim' if colaborador.Ativo else 'Não' }}</p>
     </div>
     {% endif %}

@@ -1,4 +1,4 @@
-from utilidades import *            # Importando todas bibliotecas
+from bibliotecas import *            # Importando todas bibliotecas
 from models.tabelas import *        # Importando tabelas do Banco de dados 
 
 adm_blueprint = Blueprint('adm', __name__, template_folder='templates')
@@ -10,6 +10,10 @@ def gerar_senha_temporaria(tamanho=8):
 @adm_blueprint.route('/adm')
 @login_required
 def adm():
+    if not current_user.Administrador:
+        flash("Você não tem permissão para acessar esta página.", "danger")
+        return redirect(url_for('login.logout'))
+        
     return render_template('adm.html')
 
 @adm_blueprint.route('/adm/consultar', methods=['GET', 'POST'])
@@ -23,24 +27,19 @@ def consultar():
             flash("Colaborador não encontrado.", "danger")
             return redirect(url_for('adm.consultar'))
 
-        # Busca informações adicionais se for administrador
-        admin = Administrador.query.filter_by(Matricula=matricula).first()
-
-        return render_template('consultar.html', colaborador=colaborador, admin=admin)
+        return render_template('consultar.html', colaborador=colaborador)
 
     return render_template('consultar.html')
 
 @adm_blueprint.route('/adm/editar/<matricula>', methods=['GET', 'POST'])
 @login_required
 def editar(matricula):
-    from app import mail
 
     colaborador = Colaborador.query.filter_by(Matricula=matricula).first_or_404()
-    admin = Administrador.query.filter_by(Matricula=matricula).first()
 
     if request.method == 'POST':
         nome = request.form.get('nome')
-        administrador_selecionado = request.form.get('administrador') == '1'
+        administrador = request.form.get('administrador') == '1'
         ativo = request.form.get('ativo') == '1'
         email = request.form.get('email')
         senha = gerar_senha_temporaria()
@@ -48,37 +47,14 @@ def editar(matricula):
         # Atualiza dados do colaborador
         colaborador.Nome = nome
         colaborador.Ativo = ativo
-
-        if administrador_selecionado:
-            if not admin:
-                # Cria novo administrador
-                novo_admin = Administrador(
-                    Matricula=colaborador.Matricula,
-                    Email=email,
-                    Senha=senha
-                )
-                db.session.add(novo_admin)
-                msg = Message(
-                    subject="Kronos - Sistema de Ponto",
-                    recipients=[email],
-                    body=f"Olá {novo_colaborador.Nome}, Atualizamos seu cadastro!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
-                )
-                mail.send(msg)
-
-            else:
-                # Atualiza email e, se houver senha, atualiza também
-                admin.Email = email
-                if senha:
-                    admin.Senha = senha
-        else:
-            if admin:
-                db.session.delete(admin)
+        colaborador.Email = email
+        colaborador.Administrador = administrador
 
         db.session.commit()
         flash("Dados atualizados com sucesso!", "success")
         return redirect(url_for('adm.consultar', matricula=colaborador.Matricula))
 
-    return render_template('editar.html', colaborador=colaborador, admin=admin)
+    return render_template('editar.html', colaborador=colaborador)
 
 
 @adm_blueprint.route('/adm/cadastrar')
@@ -98,9 +74,13 @@ def salvar_cadastro():
     nome = request.form.get('nome')
     administrador = request.form.get('administrador') == '1'
     email = request.form.get('email')
-    senha = gerar_senha_temporaria()
 
-    if not nome:
+    # Verifica se já existe colaborador com esse e-mail ou matrícula
+    if Colaborador.query.filter_by(Email=email).first():
+        flash("Este e-mail já está cadastrado.", "danger")
+        return redirect(url_for('adm.cadastrar'))
+
+    if not nome or not email:
         flash("Nome completo obrigatório.", "danger")
         return redirect(url_for('adm.cadastrar'))
 
@@ -109,25 +89,19 @@ def salvar_cadastro():
     proxima_matricula = ultima.Matricula + 1 if ultima else 1000
 
     try:
+        senha = gerar_senha_temporaria()
+
         novo_colaborador = Colaborador(
             Matricula=proxima_matricula,
             Nome=nome,
-            Ativo=True
+            Email=email,
+            Administrador=administrador,
+            Ativo=True,
+            Nova_Senha=True,
         )
+        novo_colaborador.set_senha(senha)
+
         db.session.add(novo_colaborador)
-
-        if administrador:
-            if not email or not senha:
-                flash("E-mail e senha são obrigatórios para administradores.", "danger")
-                return redirect(url_for('adm.cadastrar'))
-
-            novo_admin = Administrador(
-                Matricula=proxima_matricula,
-                Email=email,
-                Senha=senha
-            )
-            db.session.add(novo_admin)
-
         db.session.commit()
 
         msg = Message(
@@ -136,8 +110,7 @@ def salvar_cadastro():
             body=f"Olá {novo_colaborador.Nome}, Seja bem vindo!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
         )
         mail.send(msg)
-
-        flash(f"Colaborador cadastrado com sucesso! Matrícula: {proxima_matricula}\n\nEnviamos um novo e-mail para o endereço {email}, informando a matricula e a senha para primeiro acesso do usuário.", "success")
+        flash(f"Colaborador cadastrado com sucesso!Enviamos um novo e-mail para o endereço {email}, informando a matricula e a senha para primeiro acesso do usuário.", "success")
         return redirect(url_for('adm.cadastrar'))
     except Exception as e:
         db.session.rollback()
@@ -204,10 +177,10 @@ def relatorio():
             except ValueError:
                 flash("Datas inválidas.", "danger")
 
-        pontos = query.all()
+        pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
     else:
-        pontos = Ponto.query.all()
+        pontos = Ponto.query.order_by(Ponto.Data_Hora.desc()).all()
 
     return render_template(
         'relatorio.html',
@@ -265,9 +238,8 @@ def relatorio_pdf():
         except ValueError:
             pass
 
-    pontos = query.all()
+    pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
-    # ✅ Adicionando data_atual aqui
     data_atual = datetime.now()
 
     html = render_template("pdf.html", 

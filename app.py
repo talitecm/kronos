@@ -1,9 +1,8 @@
 from flask import *
-from utilidades import *
+from bibliotecas import *
 from adm.adm import adm_blueprint                                                           # Importando o blueprint para rotas de adm.
 from ponto.ponto import ponto_blueprint                                                     # Importando o blueprint para rotas de ponto.
 from adm.login import login_blueprint
-
 
 app = Flask(__name__)
 
@@ -20,7 +19,6 @@ app.config.from_mapping({
     'MAIL_DEFAULT_SENDER': 'kronos.sistema@gmail.com'
 })
 
-
 mail = Mail(app)
 
 load_dotenv()                                                                                   # Carrega variáveis do nosso arquivo .flaskenv
@@ -35,9 +33,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = conexao                                 
 db.init_app(app)                                                                                # Sinaliza que o banco será gerenciado pelo app
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')                                              # Importando a secret key do flaskenv
 lm.init_app(app)                                                                                # Sinalizando que o loginManager será gerenciado pelo app
-
-
-
 
 # Erro de solicitação inválida
 @app.errorhandler(400)
@@ -63,10 +58,4 @@ def internal_server_error(e):
 lm.login_view = 'login.login'
 lm.login_message = '🔒 Acesso restrito. Faça login primeiro.'
 lm.login_message_category = 'danger'
-
-@app.route('/testar_email')
-def testar_email():
-    msg = Message("Assunto", recipients=["mickaell.gomes.l@gmail.com"])
-    msg.body = "Este é um teste de envio de e-mail!"
-    mail.send(msg)
-    return "E-mail enviado!"
+lm.remember_cookie_duration = timedelta(minutes=1)

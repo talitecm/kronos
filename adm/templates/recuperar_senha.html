@@ -15,6 +15,7 @@
     {% endwith %}
     <input type="text" name="email" placeholder="Digite seu e-mail" required autofocus>
     <div class="button-container">
+        <a href="{{ url_for('login.login')}}"><button type="button">Voltar</button></a>
         <button type="submit">Confirmar</button>
     </div>
 </form>

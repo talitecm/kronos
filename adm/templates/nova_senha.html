@@ -1,0 +1,26 @@
+{% extends "base-login.html" %}
+
+{% block conteudo %}
+
+<form class="login-form" method="post" action="{{ url_for('login.nova_senha') }}">
+    <h2>Definir Nova Senha</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alertas">
+                {% for categoria, mensagem in messages %}
+                    <div class="alert alert-{{ categoria }}">{{ mensagem }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <input type="password" name="nova_senha" placeholder="Digite sua nova senha" required autofocus>
+    <input type="password" name="confirmar_nova_senha" placeholder="Confirme sua nova senha" required>
+
+    <div class="button-container">
+        <button type="submit">Salvar Nova Senha</button>
+    </div>
+</form>
+
+{% endblock %}

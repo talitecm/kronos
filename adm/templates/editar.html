@@ -14,14 +14,14 @@
     <div class="form-group short">
         <label>Administrador?</label>
         <select name="administrador">
-            <option value="1" {% if admin %}selected{% endif %}>Sim</option>
-            <option value="0" {% if not admin %}selected{% endif %}>Não</option>
+            <option value="1" {% if colaborador.Administrador %}selected{% endif %}>Sim</option>
+            <option value="0" {% if not colaborador.Administrador %}selected{% endif %}>Não</option>
         </select>
     </div>
 
     <div class="form-group">
         <label>E-mail</label>
-        <input type="email" name="email" value="{{ admin.Email if admin else '' }}" {% if admin %}readonly{% endif %}>
+        <input type="email" name="email" value="{{colaborador.Email}}">
     </div>
 
     <div class="form-group short">

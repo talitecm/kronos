@@ -13,12 +13,20 @@
     <div class="box-ponto">
         <form class="form-ponto" method="POST" action="/">
             <input type="text" name="matricula" placeholder="Digite sua Matrícula" required>
+            <input type="password" name="senha" placeholder="Digite sua Senha" required>
             <button type="submit">Confirmar</button>
         </form>
-        <!-- Mensagem de sucesso ou erro -->
-        {% if mensagem %}
-        <p class="msg">{{ mensagem }}</p>
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alertas">
+                    {% for categoria, mensagem in messages %}
+                        <div class="alert alert-{{ categoria }}">
+                            {{ mensagem }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 </div>
 

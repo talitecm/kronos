@@ -1,11 +1,21 @@
-from utilidades import *
+from bibliotecas import *
 
 class Colaborador(db.Model, UserMixin):
     __tablename__ = 'colaborador'
 
-    Matricula = db.Column(db.Integer, unique=True, nullable=False, primary_key=True, autoincrement=True)
-    Nome = db.Column(db.String(50), nullable=False)
-    Ativo = db.Column(db.Boolean)
+    Matricula = db.Column(db.Integer, primary_key=True)
+    Nome = db.Column(db.String(100))
+    Administrador = db.Column(db.Boolean, default=False)  # Indica se é admin
+    Ativo = db.Column(db.Boolean, default=True)
+    Senha = db.Column(db.String(600))               # Armazena hash da senha
+    Nova_Senha = db.Column(db.Boolean, default=True)  # Para redefinição de senha
+    Email = db.Column(db.String(100))
+
+    def set_senha(self, senha):
+        self.Senha = generate_password_hash(senha)
+
+    def check_senha(self, senha):
+        return check_password_hash(self.Senha, senha)
 
     def get_id(self):
         return str(self.Matricula)  # Retorna a matrícula como ID do usuário
@@ -16,27 +26,6 @@ class Colaborador(db.Model, UserMixin):
 
     # Relacionamento com a tabela Ponto
     pontos = db.relationship('Ponto', backref='colaborador', lazy=True)
-
-    # Relacionamento com a tabela Adminstrador
-    administrador = db.relationship("Administrador", back_populates="colaborador", uselist=False)
-
-class Administrador(db.Model, UserMixin):
-    __tablename__ = 'administrador'
-
-    Matricula = db.Column(db.Integer,db.ForeignKey('colaborador.Matricula'),unique=True,nullable=False,primary_key=True)
-    Idadministrador = db.Column(db.Integer, autoincrement=True, nullable=False)
-    Email = db.Column(db.String(80), unique=True, nullable=False)
-    Senha = db.Column(db.String(8), nullable=False)
-
-    def __repr__(self):
-        return f"<administrador {self.Matricula}>"
-    
-    def get_id(self):
-        return str(self.Matricula)  # Retorna a matrícula como ID do usuário
-    
-    colaborador = db.relationship("Colaborador", back_populates="administrador")
-
-
 
 class Ponto(db.Model):
     __tablename__ = 'ponto'
