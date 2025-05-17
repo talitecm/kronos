@@ -13,9 +13,10 @@
             </div>
     {% endif %}
     {% endwith %}
+        <input type="text" name="matricula" placeholder="Digite sua Matricula" required autofocus>
     <input type="text" name="email" placeholder="Digite seu e-mail" required autofocus>
     <div class="button-container">
-        <a href="{{ url_for('login.login')}}"><button type="button">Voltar</button></a>
+        <a href="/"><button type="button">Voltar</button></a>
         <button type="submit">Confirmar</button>
     </div>
 </form>

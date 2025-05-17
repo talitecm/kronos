@@ -60,15 +60,32 @@
             font-size: 10px;
             margin-bottom: 10mm;
         }
+
+        .dados_usuario {
+            display:flex;
+            flex-direction: row;
+            justify-content: space-between;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="pagina-a4">
         <div class="cabecalho">
             <h2>Relatório de Pontos</h2>
-            <p><strong>Data da emissão:</strong> {{ data_atual.strftime('%d/%m/%Y %H:%M') }}</p>
-        </div>
 
+            <div class="dados_usuario">
+                <p><strong>Data da emissão:</strong> {{ data_atual.strftime('%d/%m/%Y %H:%M') }}</p>
+                {% if nome %}
+                    <p><strong>Colaborador:</strong> {{ nome }}</p>
+                {% endif %}
+
+                {% if matricula %}
+                    <p><strong>Matrícula:</strong> {{ matricula }}</p>
+                {% endif %}
+            </div>
+
+        </div>
         <table>
             <thead>
                 <tr>

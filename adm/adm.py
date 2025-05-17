@@ -121,8 +121,8 @@ def salvar_cadastro():
 @adm_blueprint.route('/adm/relatorio', methods=['GET', 'POST'])
 @login_required
 def relatorio():
-    data_atual = datetime.now()  # ✅ Definida antes de tudo
-
+    data_atual = datetime.now()
+    
     pontos = []
     matricula = ''
     nome = ''
@@ -241,17 +241,23 @@ def relatorio_pdf():
 
     pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
+    # ✅ Se veio matrícula mas não veio nome, busca o nome no banco
+    nome_colaborador = None
+    if matricula:
+        colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
+        if colaborador:
+            nome_colaborador = colaborador.Nome
+
     data_atual = datetime.now()
 
     html = render_template("pdf.html", 
                            pontos=pontos, 
                            matricula=matricula, 
-                           nome=nome,
-                           data_atual=data_atual)  # ✅ Incluída no contexto
+                           nome=nome_colaborador or nome,  # ✅ Nome do colaborador ou filtro por nome
+                           data_atual=data_atual)
 
     pdf = HTML(string=html).write_pdf()
 
     return Response(pdf, mimetype='application/pdf',
                     headers={'Content-Disposition': 'inline; filename=relatorio_pontos.pdf'})
-
 

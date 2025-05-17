@@ -59,29 +59,38 @@ def recuperar_senha():
     from app import mail
     
     if request.method == 'POST':
+        matricula = request.form.get('matricula')
         email = request.form.get('email')
 
-        administrador = Colaborador.query.filter_by(Email=email).first()
+        colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
 
-        if not administrador:
+        if not colaborador:
+            flash("Matrícula inválida.", "danger")
+            return redirect(url_for("login.login"))
+
+        if colaborador.Email != email:
+            flash("O e-mail informado não corresponde ao colaborador.", "danger")
+            return redirect(url_for('login.recuperar_senha'))
+
+        if not colaborador:
             flash("E-mail não encontrado.", "danger")
             return redirect(url_for('login.recuperar_senha'))
 
         nova_senha = gerar_senha_temporaria()
-        administrador.set_senha(nova_senha)
-        administrador.Nova_Senha = True
+        colaborador.set_senha(nova_senha)
+        colaborador.Nova_Senha = True
         db.session.commit()
 
         # ✉️ Enviar e-mail com a nova senha
         msg = Message(
             subject="Recuperação de Senha - Sistema de Ponto",
             recipients=[email],
-            body=f"Olá {administrador.Nome}, sua nova senha é: {nova_senha}\n\nPor favor, faça login e altere-a para uma senha segura."
+            body=f"Olá {colaborador.Nome}, sua nova senha é: {nova_senha}\n\nPor favor, faça login e altere-a para uma senha segura."
         )
         mail.send(msg)
 
         flash("Foi enviado um e-mail com sua nova senha.", "success")
-        return redirect(url_for('login.login'))
+        return redirect(url_for('login.recuperar_senha'))
 
     return render_template('recuperar_senha.html')
 
@@ -89,15 +98,8 @@ def recuperar_senha():
 @login_required
 def nova_senha():
     if request.method == 'POST':
-        matricula = request.form.get('matricula')
         nova_senha = request.form.get('nova_senha')
         confirmar_nova_senha = request.form.get('confirmar_nova_senha')
-
-        colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
-
-        if not colaborador:
-            flash("Matrícula inválida.", "danger")
-            return redirect(url_for("login.login"))
 
         if nova_senha != confirmar_nova_senha:
             flash("As senhas não coincidem.", "danger")
@@ -113,6 +115,6 @@ def nova_senha():
         db.session.commit()
 
         flash("Senha atualizada com sucesso!", "success")
-        return redirect(url_for('login.login'))
+        return render_template('home.html')
 
     return render_template('nova_senha.html')

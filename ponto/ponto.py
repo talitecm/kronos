@@ -2,10 +2,15 @@ from bibliotecas import *
 from models.tabelas import db, Colaborador, Ponto
 
 ponto_blueprint = Blueprint('ponto', __name__, template_folder='templates')
+from datetime import datetime, timedelta
+import pytz
 
 @ponto_blueprint.route('/', methods=['GET', 'POST'])
-
 def registrar_ponto():
+    tz = pytz.timezone('America/Sao_Paulo')
+    agora = datetime.now(tz)
+    hoje = agora.date()
+
     if request.method == 'POST':
         matricula = request.form.get('matricula')
         senha = request.form.get('senha')
@@ -14,37 +19,50 @@ def registrar_ponto():
             flash("Matrícula e senha são obrigatórias.", "danger")
             return redirect(url_for('ponto.registrar_ponto'))
 
-        # Busca colaborador pelo número de matrícula
         colaborador = Colaborador.query.filter_by(Matricula=matricula, Ativo=True).first()
 
         if not colaborador:
             flash("Matrícula não encontrada ou colaborador inativo.", "danger")
             return redirect(url_for('ponto.registrar_ponto'))
 
-        # Verifica se a senha está correta
         if not colaborador.check_senha(senha):
             flash("Senha incorreta.", "danger")
             return redirect(url_for('ponto.registrar_ponto'))
-        
-        if colaborador.Nova_Senha:
-            login_user(colaborador)
-            return redirect(url_for('login.nova_senha'))  # Redireciona para troca de senha
 
-        tz = pytz.timezone('America/Sao_Paulo')
-        agora = datetime.now(tz)
-        hoje = agora.date()
+        # Busca todos os pontos do dia (ordenados do mais recente para o mais antigo)
+        pontos_do_dia = Ponto.query.filter(
+            Ponto.Matricula == matricula,
+            db.func.DATE(Ponto.Data_Hora) == hoje
+        ).order_by(Ponto.Data_Hora.desc()).all()
 
-        # Último ponto do dia
-        ultimo_ponto = Ponto.query.filter( Ponto.Matricula == matricula, 
-        db.func.DATE(Ponto.Data_Hora) == hoje).order_by(Ponto.Data_Hora.desc()).first()
+        if pontos_do_dia:
+            ultimo_ponto = pontos_do_dia[0]  # O mais recente
+            data_hora_ultimo = ultimo_ponto.Data_Hora
 
-        # Define tipo de ponto
-        if not ultimo_ponto or ultimo_ponto.Tipo == '0':
+            # Força fuso horário, se necessário
+            if data_hora_ultimo.tzinfo is None:
+                data_hora_ultimo = tz.localize(data_hora_ultimo)
+
+            diferenca_segundos = (agora - data_hora_ultimo).total_seconds()
+
+            if diferenca_segundos < 60:
+                db.session.delete(ultimo_ponto)
+                db.session.commit()
+                flash("Último ponto apagado por ser muito próximo ao anterior.", "warning")
+                return redirect(url_for('ponto.registrar_ponto'))
+
+        # Define tipo do novo ponto
+        if not pontos_do_dia:
             tipo = '1'
-            flash("Entrada registrada com sucesso!")
+            flash("Entrada registrada!", "success")
         else:
-            tipo = '0'
-            flash("Saída registrada com sucesso!")
+            ultimo_tipo = pontos_do_dia[0].Tipo
+            if ultimo_tipo == '1':
+                tipo = '0'
+                flash("Saída registrada!", "success")
+            else:
+                tipo = '1'
+                flash("Nova entrada registrada.", "success")
 
         # Registra novo ponto
         novo_ponto = Ponto(
@@ -52,10 +70,10 @@ def registrar_ponto():
             Tipo=tipo,
             Data_Hora=agora
         )
+
         db.session.add(novo_ponto)
         db.session.commit()
 
         return redirect(url_for('ponto.registrar_ponto'))
 
-    # Se for GET, apenas retorna o formulário vazio
     return render_template("home.html")
