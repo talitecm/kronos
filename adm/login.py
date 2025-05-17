@@ -89,8 +89,15 @@ def recuperar_senha():
 @login_required
 def nova_senha():
     if request.method == 'POST':
+        matricula = request.form.get('matricula')
         nova_senha = request.form.get('nova_senha')
         confirmar_nova_senha = request.form.get('confirmar_nova_senha')
+
+        colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
+
+        if not colaborador:
+            flash("Matrícula inválida.", "danger")
+            return redirect(url_for("login.login"))
 
         if nova_senha != confirmar_nova_senha:
             flash("As senhas não coincidem.", "danger")
