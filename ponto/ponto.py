@@ -48,7 +48,7 @@ def registrar_ponto():
             if diferenca_segundos < 60:
                 db.session.delete(ultimo_ponto)
                 db.session.commit()
-                flash("Último ponto apagado por ser muito próximo ao anterior.", "warning")
+                flash("Último ponto apagado. Tente registrar novamente em 15s.", "warning")
                 return redirect(url_for('ponto.registrar_ponto'))
 
         # Define tipo do novo ponto

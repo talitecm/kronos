@@ -217,6 +217,13 @@ button[type="button"]:hover {
     
 }
 
+.btn-pdf img {
+    width: 15px;
+    height: auto;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
 /* Estilo para telas menores */
 @media (max-width: 768px) {
     .top-bar {

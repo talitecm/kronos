@@ -27,7 +27,7 @@
         <button type="submit">Filtrar</button>
         <a href="{{ url_for('adm.relatorio') }}" class="botao-base"><button type="button">Limpar Filtros</button></a>
         <a href="{{ url_for('adm.relatorio_pdf') }}?matricula={{ matricula }}&nome={{ nome }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="botao-base" target="_blank">
-            <button type="button">🖨️ Visualizar em PDF</button>
+            <button type="button" class="btn-pdf"><img src="{{ url_for('static', filename='img/pdf.png') }}" alt="pdf"> Visualizar em PDF</button>
         </a>
     </div>
 </form>

@@ -56,6 +56,6 @@ def internal_server_error(e):
 
 # Aviso de acesso não autorizado
 lm.login_view = 'login.login'
-lm.login_message = '🔒 Acesso restrito. Faça login primeiro.'
+lm.login_message = 'Acesso restrito. Faça login primeiro.'
 lm.login_message_category = 'danger'
 lm.remember_cookie_duration = timedelta(minutes=1)

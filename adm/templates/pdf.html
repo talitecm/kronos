@@ -34,7 +34,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            opacity: 0.08;
+            opacity: 0.03;
             pointer-events: none;
             z-index: 0;
             user-select: none;
@@ -94,7 +94,6 @@
     {% endif %}
 
     <!-- URL para carregar a imagem -->
-    {% set base_url = request.url_root[:-1] %}
     {% set img_url = url_for('static', filename='img/So_logo-sf.png') %}
 
      <!-- Loop para dividir os dados em páginas (no caso só deixei 30 por pagina)-->
@@ -102,7 +101,7 @@
         <div class="pagina-a4">
             
             <!-- Marca d'água -->
-            <img src="{{ base_url }}{{ img_url }}" class="marca-dagua" />
+            <img src="{{ img_url }}" class="marca-dagua" />
 
             <!-- Cabeçalho do relatório (só aparece na primeira página) -->
             {% if loop.first %}

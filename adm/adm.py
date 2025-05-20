@@ -107,7 +107,7 @@ def salvar_cadastro():
         msg = Message(
             subject="Kronos - Sistema de Ponto",
             recipients=[email],
-            body=f"Olá {novo_colaborador.Nome}, Seja bem vindo!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nhttps://kronos-gestao-do-tempo.onrender.com\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
+            body=f"Olá {novo_colaborador.Nome}, Seja bem vindo(a)!!\n\nSua matricula é: {proxima_matricula}\nSua senha provisória: {senha}\n\nhttps://kronos-gestao-do-tempo.onrender.com\n\nPor favor, não esqueça da sua matrícula e ao inserir sua senha pela primeira vez, altere-a para uma mais segura."
         )
 
         mail.send(msg)
@@ -219,7 +219,7 @@ def relatorio_pdf():
     html = render_template("pdf.html", 
                            pontos=pontos, 
                            matricula=matricula, 
-                           nome=nome_colaborador or nome,  # ✅ Nome do colaborador ou filtro por nome
+                           nome=nome_colaborador or nome,
                            data_atual=data_atual)
 
     pdf = HTML(string=html).write_pdf()

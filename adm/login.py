@@ -81,7 +81,6 @@ def recuperar_senha():
         colaborador.Nova_Senha = True
         db.session.commit()
 
-        # ✉️ Enviar e-mail com a nova senha
         msg = Message(
             subject="Recuperação de Senha - Sistema de Ponto",
             recipients=[email],
