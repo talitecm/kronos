@@ -121,28 +121,27 @@ def salvar_cadastro():
 @adm_blueprint.route('/adm/relatorio', methods=['GET', 'POST'])
 @login_required
 def relatorio():
-    data_atual = datetime.now()
-    
     pontos = []
     matricula = ''
     nome = ''
-    tipo_filtro = ''
-    data_inicio = ''
-    data_fim = ''
-    mes = ''
-    data = ''
+    data_inicio = request.form.get('data_inicio') if request.method == 'POST' else None
+    data_fim = request.form.get('data_fim') if request.method == 'POST' else None
+
+    hoje = datetime.now()
+    
+    # Define datas padrão: início e fim do mês atual
+    if not data_inicio and not data_fim and request.method == 'GET':
+        inicio_mes = hoje.replace(day=1)
+        fim_mes = (inicio_mes + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+
+        data_inicio = inicio_mes.strftime('%Y-%m-%d')
+        data_fim = fim_mes.strftime('%Y-%m-%d')
+
+    query = Ponto.query
 
     if request.method == 'POST':
         matricula = request.form.get('matricula')
         nome = request.form.get('nome')
-        tipo_filtro = request.form.get('tipo_filtro')
-        data_inicio = request.form.get('data_inicio')
-        data_fim = request.form.get('data_fim')
-        mes = request.form.get('mes')
-        data = request.form.get('data')
-        data_atual = datetime.now()
-
-        query = Ponto.query
 
         if matricula:
             query = query.filter(Ponto.Matricula == matricula)
@@ -150,50 +149,30 @@ def relatorio():
         if nome:
             query = query.join(Colaborador).filter(Colaborador.Nome.like(f"%{nome}%"))
 
-        if tipo_filtro == 'mes' and mes:
-            try:
-                ano_mes = datetime.strptime(mes, '%Y-%m')
-                inicio = datetime(ano_mes.year, ano_mes.month, 1)
-                fim = datetime(ano_mes.year, ano_mes.month + 1, 1) if ano_mes.month < 12 else datetime(ano_mes.year + 1, 1, 1)
-                query = query.filter(Ponto.Data_Hora >= inicio, Ponto.Data_Hora < fim)
-            except ValueError:
-                flash("Mês inválido.", "danger")
+    try:
+        inicio = None
+        fim = None
 
-        elif tipo_filtro == 'data' and data:
-            try:
-                data_unico = datetime.strptime(data, '%Y-%m-%d')
-                query = query.filter(db.func.DATE(Ponto.Data_Hora) == data_unico.date())
-            except ValueError:
-                flash("Data inválida.", "danger")
+        if data_inicio:
+            inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
+            query = query.filter(Ponto.Data_Hora >= inicio)
 
-        elif tipo_filtro == 'periodo' and data_inicio and data_fim:
-            try:
-                inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
-                fim = datetime.strptime(data_fim, '%Y-%m-%d')
+        if data_fim:
+            fim = datetime.strptime(data_fim, '%Y-%m-%d') + timedelta(days=1)
+            query = query.filter(Ponto.Data_Hora < fim)
 
-                if inicio > fim:
-                    flash("Data inicial maior que a final.", "danger")
-                else:
-                    query = query.filter(Ponto.Data_Hora >= inicio, Ponto.Data_Hora <= fim)
-            except ValueError:
-                flash("Datas inválidas.", "danger")
+    except ValueError:
+        flash("Datas inválidas.", "danger")
 
-        pontos = query.order_by(Ponto.Data_Hora.desc()).all()
-
-    else:
-        pontos = Ponto.query.order_by(Ponto.Data_Hora.desc()).all()
+    pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
     return render_template(
         'relatorio.html',
         pontos=pontos,
         matricula=matricula,
         nome=nome,
-        tipo_filtro=tipo_filtro,
         data_inicio=data_inicio,
-        data_fim=data_fim,
-        mes=mes,
-        data=data,
-        data_atual=data_atual
+        data_fim=data_fim
     )
 
 @adm_blueprint.route('/relatorio/pdf')
@@ -201,11 +180,8 @@ def relatorio():
 def relatorio_pdf():
     matricula = request.args.get('matricula')
     nome = request.args.get('nome')
-    tipo_filtro = request.args.get('tipo_filtro')
     data_inicio = request.args.get('data_inicio')
     data_fim = request.args.get('data_fim')
-    mes = request.args.get('mes')
-    data = request.args.get('data')
 
     query = Ponto.query
 
@@ -214,34 +190,24 @@ def relatorio_pdf():
 
     if nome:
         query = query.join(Colaborador).filter(Colaborador.Nome.like(f"%{nome}%"))
+    
+    try:
+        inicio = None
+        fim = None
 
-    if mes:
-        try:
-            ano_mes = datetime.strptime(mes, '%Y-%m')
-            inicio = datetime(ano_mes.year, ano_mes.month, 1)
-            fim = datetime(ano_mes.year, ano_mes.month + 1, 1) if ano_mes.month < 12 else datetime(ano_mes.year + 1, 1, 1)
-            query = query.filter(Ponto.Data_Hora >= inicio, Ponto.Data_Hora < fim)
-        except ValueError:
-            pass
-
-    elif data_inicio and data_fim:
-        try:
+        if data_inicio:
             inicio = datetime.strptime(data_inicio, '%Y-%m-%d')
-            fim = datetime.strptime(data_fim, '%Y-%m-%d')
-            query = query.filter(Ponto.Data_Hora.between(inicio, fim))
-        except ValueError:
-            pass
+            query = query.filter(Ponto.Data_Hora >= inicio)
 
-    elif data:
-        try:
-            data_filtro = datetime.strptime(data, '%Y-%m-%d')
-            query = query.filter(db.func.DATE(Ponto.Data_Hora) == data_filtro.date())
-        except ValueError:
-            pass
+        if data_fim:
+            fim = datetime.strptime(data_fim, '%Y-%m-%d') + timedelta(days=1)
+            query = query.filter(Ponto.Data_Hora < fim)
 
+    except ValueError:
+        pass  # Ou trate erro se quiser exibir algo
+    
     pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
-    # ✅ Se veio matrícula mas não veio nome, busca o nome no banco
     nome_colaborador = None
     if matricula:
         colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
@@ -257,7 +223,8 @@ def relatorio_pdf():
                            data_atual=data_atual)
 
     pdf = HTML(string=html).write_pdf()
-
+    html = render_template("pdf.html", pontos=pontos, data_atual=data_atual)
+    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
     return Response(pdf, mimetype='application/pdf',
                     headers={'Content-Disposition': 'inline; filename=relatorio_pontos.pdf'})
 

@@ -1,0 +1,21 @@
+{
+  "name": "Kronos - Sistema de Pontos",
+  "short_name": "Kronos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c2d48",
+  "theme_color": "#0c2d48",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/static/img/kronos_favicon.ico",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/kronos_favicon.ico",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

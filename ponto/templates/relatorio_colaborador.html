@@ -1,0 +1,60 @@
+{% extends "base-ponto.html" %}
+{% block conteudo %}
+
+<div class="alertas">
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+    {% for categoria, mensagem in messages %}
+    <p class="alert alert-{{ categoria }}">
+        {{ mensagem }}
+    </p>
+    {% endfor %}
+{% endif %}
+{% endwith %}
+</div>
+
+<h2 style="text-align:center; margin-bottom: 1.5rem;">Relatório de Pontos</h2>
+
+<form method="post" action="{{ url_for('ponto.relatorio_colaborador') }}" class="form-ponto">
+
+    <!-- Campo Matrícula -->
+    <div class="campos-lado-a-lado">
+        <input type="text" name="matricula" value="{{ matricula }}" placeholder="Matrícula">
+    </div>
+
+    <!-- Campo Senha -->
+    <div class="campos-lado-a-lado">
+        <input type="password" name="senha" value="{{ senha }}" placeholder="Senha">
+    </div>
+
+    <!-- Campos de Data -->
+    <div class="campos-lado-a-lado">
+        <input type="date" name="data_inicio" value="{{ data_inicio }}">
+        <input type="date" name="data_fim" value="{{ data_fim }}">
+    </div>
+
+    <!-- Botões -->
+    <div class="filtro-lado-a-lado">
+        <a href="{{ url_for('ponto.registrar_ponto') }}" class="link-login">
+            <button type="button">Voltar</button>
+        </a>
+        <button type="submit" class="botao-filtrar">Filtrar</button>
+    </div>
+
+</form>
+<script>
+    // Esconde as mensagens flash após 5 segundos
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            const alerts = document.querySelectorAll(".alert");
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 500); // Remove após fade out
+            });
+        }, 5000);
+    });
+</script>
+
+{% endblock %}

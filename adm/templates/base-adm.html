@@ -18,7 +18,7 @@
                 {% if current_user.is_authenticated %}
                     <div class="welcome-wrapper">
                         <div class="welcome-message">
-                            Seja Bem Vindo <strong>{{ current_user.Nome }}</strong>
+                            Seja Bem Vindo(a) <strong>{{ current_user.Nome }}</strong>
                         </div>
                     </div>
                 {% endif %}
@@ -28,9 +28,9 @@
             </div>
 
             <nav class="admin-nav">
-                <a href="{{ url_for('adm.consultar') }}"><button>Consultar</button></a>
-                <a href="{{ url_for('adm.cadastrar') }}"><button>Cadastrar Colaborador</button></a>
-                <a href="{{ url_for('adm.relatorio') }}"><button>Relatório</button></a>
+                <a href="{{ url_for('adm.consultar') }}" class="botao-base"><button>Consultar</button></a>
+                <a href="{{ url_for('adm.cadastrar') }}" class="botao-base"><button>Cadastrar Colaborador</button></a>
+                <a href="{{ url_for('adm.relatorio') }}" class="botao-base"><button>Relatório</button></a>
             </nav>
 
             <section id="content-area" class="content-area">

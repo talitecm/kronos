@@ -7,7 +7,7 @@
         @page {
             size: A4;
             margin: 0;
-            margin-top: 15mm;
+            margin-top: 5mm;
             margin-bottom: 15mm;
         }
 
@@ -24,6 +24,20 @@
             background: white;
             padding: 10mm;
             box-sizing: border-box;
+            position: relative;
+            page-break-after: always;
+        }
+
+        .marca-dagua {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
         }
 
         h2 {
@@ -36,6 +50,8 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 11px;
+            page-break-inside: auto;
+            border-collapse: collapse;
         }
 
         th, td {
@@ -58,7 +74,6 @@
         .data-geracao {
             text-align: right;
             font-size: 10px;
-            margin-bottom: 10mm;
         }
 
         .dados_usuario {
@@ -70,34 +85,56 @@
     </style>
 </head>
 <body>
-    <div class="pagina-a4">
-        <div class="cabecalho">
-            <h2>Relatório de Pontos</h2>
 
-            <div class="dados_usuario">
-                <p><strong>Data da emissão:</strong> {{ data_atual.strftime('%d/%m/%Y %H:%M') }}</p>
-                {% if nome %}
-                    <p><strong>Colaborador:</strong> {{ nome }}</p>
-                {% endif %}
+    <!-- Variáveis para paginação manual -->
+    {% set registros_por_pagina = 20 %}
+    {% set total_paginas = (pontos|length / registros_por_pagina)|int %}
+    {% if pontos|length % registros_por_pagina > 0 %}
+        {% set total_paginas = total_paginas + 1 %}
+    {% endif %}
 
-                {% if matricula %}
-                    <p><strong>Matrícula:</strong> {{ matricula }}</p>
-                {% endif %}
+    <!-- URL para carregar a imagem -->
+    {% set base_url = request.url_root[:-1] %}
+    {% set img_url = url_for('static', filename='img/So_logo-sf.png') %}
+
+     <!-- Loop para dividir os dados em páginas (no caso só deixei 30 por pagina)-->
+    {% for pagina in pontos|batch(30) %} {# 20 registros por página #}
+        <div class="pagina-a4">
+            
+            <!-- Marca d'água -->
+            <img src="{{ base_url }}{{ img_url }}" class="marca-dagua" />
+
+            <!-- Cabeçalho do relatório (só aparece na primeira página) -->
+            {% if loop.first %}
+            <div class="cabecalho">
+                <h1>Kronos - Sistema de Pontos</h1>
+                <h2>Relatório de Pontos</h2>
+                
+                <!-- Informações do colaborador e data -->
+                <div class="dados_usuario">
+                    <p><strong>Data da emissão:</strong> {{ data_atual.strftime('%d/%m/%Y %H:%M') }}</p>
+                    {% if nome %}
+                        <p><strong>Colaborador:</strong> {{ nome }}</p>
+                    {% endif %}
+
+                    {% if matricula %}
+                        <p><strong>Matrícula:</strong> {{ matricula }}</p>
+                    {% endif %}
+                </div>
             </div>
+            {% endif %}
 
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Matrícula</th>
-                    <th>Nome</th>
-                    <th>Data/Hora</th>
-                    <th>Tipo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if pontos %}
-                    {% for ponto in pontos %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nome</th>
+                        <th>Data/Hora</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ponto in pagina %}
                         <tr>
                             <td>{{ ponto.Matricula }}</td>
                             <td>{{ ponto.colaborador.Nome if ponto.colaborador else 'Desconhecido' }}</td>
@@ -105,16 +142,14 @@
                             <td>{{ 'Entrada' if ponto.Tipo == '1' else 'Saída' }}</td>
                         </tr>
                     {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4" style="text-align:center;">Nenhum registro encontrado.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-        <div class="rodape">
-            {{ data_atual.strftime('%d/%m/%Y') }}
+                </tbody>
+            </table>
+
+            <div class="rodape">
+                Página {{ loop.index }} de {{ total_paginas }}
+            </div>
         </div>
-    </div>
+    {% endfor %}
+
 </body>
 </html>

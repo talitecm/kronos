@@ -74,8 +74,10 @@ body, html {
     justify-content: center;
 }
 
+/* Estilo base do formulário */
 .login-form {
     width: 40%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
@@ -211,4 +213,50 @@ body {
 
 .form-ponto button:hover {
     background-color: #156ea6;
+}
+
+/* Ajustes para telas menores (mobile) */
+@media (max-width: 768px) {
+    .login-form {
+        width: 90%;
+        padding: 1.5rem;
+        margin: 5%;
+    }
+
+    .painel-dir {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .painel-esq {
+        display: none; /* Esconde painel lateral em telas pequenas */
+    }
+
+    .login-form input,
+    .button-container button {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+
+    .button-container {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .button-container button {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .link-login {
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    body {
+        padding: 1rem;
+    }
 }

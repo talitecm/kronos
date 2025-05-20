@@ -6,7 +6,6 @@ html {
     height: 100%;
     background-image: url('../../img/bg-ponto.png');
     background-size: cover;
-    background-repeat: no-repeat;
     background-position: center center;
     color: #ffffff;
     display: flex;
@@ -18,95 +17,133 @@ html {
 .ponto-container {
     display: flex;
     flex-direction: column;
+    justify-content: start;
     align-items: center;
     height: 100vh;
     width: 100vw;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .nav-home {
-    height: 10%;
     width: 100%;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     align-items: start;
-    gap: 4.5rem;
+    margin-bottom: 1rem;
 }
 
 .login-btn {
-    width: 70px;
-    height: 30px;
     padding: 8px 16px;
     background-color: #1e81b0;
     border: none;
     color: white;
+    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
-    margin: 1rem;
-}
-
-.container {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
+    margin: 0.5rem;
 }
 
 .clock {
-    height: 40%;
     display: flex;
     justify-content: center;
     align-items: self-end;
     font-size: 6rem;
-    margin-left: 50px;
-    margin-bottom: 2rem;
     font-weight: bold;
+    margin: 4rem auto;
+    flex-wrap: wrap;
 }
 
 .seconds {
-    font-size: 4rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 13px;
 }
 
-.separadorg {
-    margin: 0px 5px 0px;
+.separadorg{
+    margin: 0 5px;
 }
-
 .separador {
-    font-size: 4rem;
-    margin: 0px 10px 0px;
-    margin-bottom: 0.5rem;
+    margin: 0 5px;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+}
+
+.alertas {
+    position: absolute;
+    top: 60px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    z-index: 1000;
+    pointer-events: none; /* Permite que cliques passem por cima */
+}
+
+.alert {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #1e81b0;
+    color: white;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    animation: fadeSlideDown 0.5s ease forwards;
+    pointer-events: auto; /* Permite interações com o alerta */
 }
 
 .box-ponto {
-    height: 50%;
+    width: 90%;
+    max-width: 400px;
 }
 
 .form-ponto {
     background-color: rgba(12, 45, 72, 0.8);
-    padding: 2rem;
+    padding: 3rem;
     border-radius: 10px;
     box-shadow: 0 0 10px #00000050;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 2.5rem;
-    width: 100%;
+    align-items: stretch;
+    gap: 1rem;
 }
 
-.form-ponto input {
-    height: 50%;
-    padding: 10px 14px;
-    border: none;
-    border-radius: 5px;
+/* Campos lado a lado */
+.campos-lado-a-lado {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.campos-lado-a-lado input { 
+    flex: 1 1 45%;
+    min-width: 10%;
+    padding: 10px 0 10px 10px;
     font-size: 1rem;
-    width: 150px;
+    border-radius: 5px;
+    border: none;
     background-color: #e6f1f9;
     color: #000;
 }
 
-.form-ponto .input-matricula {
-    width: 150px;
-    font-size: 1rem;
-    margin-right: 2.5rem;
+/* Ações lado a lado */
+.acoes-lado-a-lado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.filtro-lado-a-lado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.link-login {
+    color: #4da3ff;
+    font-size: 0.9rem;
+    text-decoration: none;
 }
 
 .form-ponto button {
@@ -118,29 +155,63 @@ html {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s;
+    flex: 1 1 100%;
+    max-width: 100%;
 }
 
 .form-ponto button:hover {
     background-color: #156ea6;
 }
 
-.msg {
-    display: flex;
-    justify-content: center;
+/* Estilo para telas menores */
+@media (max-width: 600px) {
+    .ponto-container {
+    padding: 2rem 0;
+    }
+
+    .campos-lado-a-lado,
+    .acoes-lado-a-lado {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .campos-lado-a-lado input {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+
+    .clock {
+        display: flex;
+        justify-content: center;
+        align-items: self-end;
+        font-size: 6rem;
+        font-weight: bold;
+        margin: 4rem auto;
+        flex-wrap: wrap;
+    }
+
+    .seconds {
+        font-size: 2.5rem;
+        margin-bottom: 13px;
+    }
+
+    .separadorg{
+        margin: 0 5px;
+    }
+    .separador {
+        margin: 0 5px;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+    }
 }
 
-.alinhamento_botoes {
-    display: flex;
-    flex-direction: row;
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(-10px);
+    }
 }
-
-a.link-login {
-    display: inline-block;
-    padding: 10px;
-    margin-right: 10px;
-    color: #4da3ff; 
-    font-size: 0.9rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
-  }

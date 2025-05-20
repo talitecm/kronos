@@ -3,6 +3,7 @@
 <div class="ponto-container">
     <div class="nav-home">
         <a href="/login"><button class="login-btn">Login</button></a>
+        <a href="/relatorio_colaborador"><button class="login-btn">Relatório</button></a>
     </div>
 
     <div class="clock" id="clock">
@@ -10,28 +11,31 @@
             class="separador">:</span><span class="seconds">00</span>
     </div>
 
+    <div class="alertas">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+
+        {% for categoria, mensagem in messages %}
+        <p class="alert alert-{{ categoria }}">
+            {{ mensagem }}
+        </p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    </div>
+
     <div class="box-ponto">
         <form class="form-ponto" method="POST" action="/">
-            <div class="Alinhamento_botoes">
+            <div class="campos-lado-a-lado">
                 <input type="text" name="matricula" class="input-matricula" placeholder="Matrícula" required>
                 <input type="password" name="senha" placeholder="Senha" required>
             </div>
-            <div class="Alinhamento_botoes">
+
+            <div class="acoes-lado-a-lado">
                 <a href="/recuperar_senha" class="link-login">Recuperar Senha</a>
                 <button type="submit">Confirmar</button>
             </div>
         </form>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="alertas">
-                    {% for categoria, mensagem in messages %}
-                        <div class="alert alert-{{ categoria }}">
-                            {{ mensagem }}
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
     </div>
 </div>
 
@@ -48,5 +52,18 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
+
+
+    // Esconde as mensagens flash após 5 segundos
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            const alerts = document.querySelectorAll(".alert");
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 500); // Remove após fade out
+            });
+        }, 5000);
+    });
 </script>
 {% endblock %}

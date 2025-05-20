@@ -30,7 +30,10 @@
     </div>
     <div class="form-actions"> 
         {% if colaborador %}
-        <a href="{{ url_for('adm.editar', matricula=colaborador.Matricula) }}"><button type="button">Editar</button></a>
+        <a href="{{ url_for('adm.relatorio_pdf') }}?matricula={{ colaborador.Matricula }}&nome={{ colaborador.Nome }}" class="botao-base" target="_blank">
+            <button type="button">Relatório em PDF</button>
+        </a>
+        <a href="{{ url_for('adm.editar', matricula=colaborador.Matricula) }}" class="botao-base"><button type="button">Editar</button></a>
         {% endif %}                      
         <button type="submit">Consultar</button>
     </div>
