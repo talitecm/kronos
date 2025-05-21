@@ -1,4 +1,4 @@
-from bibliotecas import *            # Importando todas bibliotecas
+from bibliotecas import *           # Importando todas bibliotecas
 from models.tabelas import *        # Importando tabelas do Banco de dados 
 
 # Cria um Blueprint para as rotas administrativas
