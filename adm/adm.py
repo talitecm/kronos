@@ -1,12 +1,15 @@
 from bibliotecas import *            # Importando todas bibliotecas
 from models.tabelas import *        # Importando tabelas do Banco de dados 
 
+# Cria um Blueprint para as rotas administrativas
 adm_blueprint = Blueprint('adm', __name__, template_folder='templates')
 
+# Função para gerar senha temporária
 def gerar_senha_temporaria(tamanho=8):
     caracteres = string.ascii_letters + string.digits
     return ''.join(random.choices(caracteres, k=tamanho))
 
+# Rota Inicial do ADm
 @adm_blueprint.route('/adm')
 @login_required
 def adm():
@@ -16,6 +19,7 @@ def adm():
         
     return render_template('adm.html')
 
+# Rota para consultar colaborador
 @adm_blueprint.route('/adm/consultar', methods=['GET', 'POST'])
 @login_required
 def consultar():
@@ -31,6 +35,7 @@ def consultar():
 
     return render_template('consultar.html')
 
+# Rota para editar colaborador consultado
 @adm_blueprint.route('/adm/editar/<matricula>', methods=['GET', 'POST'])
 @login_required
 def editar(matricula):
@@ -56,15 +61,16 @@ def editar(matricula):
 
     return render_template('editar.html', colaborador=colaborador)
 
-
+# Rota para cadastrar novo colaborador
 @adm_blueprint.route('/adm/cadastrar')
 @login_required
 def cadastrar():
     ultima = Colaborador.query.order_by(Colaborador.Matricula.desc()).first()
-    proxima_matricula = ultima.Matricula + 1 if ultima else 1000  # ex: começa em 1000
+    proxima_matricula = ultima.Matricula + 1 if ultima else 1000  # Variável para mostrar a proxima matricula (soma + 1 com base na ultima matricula)
 
     return render_template('cadastrar.html', proxima_matricula=proxima_matricula)
 
+# Rota para salvar os dados cadastrados
 @adm_blueprint.route('/salvar_cadastro', methods=['POST'])
 @login_required
 
@@ -75,21 +81,22 @@ def salvar_cadastro():
     administrador = request.form.get('administrador') == '1'
     email = request.form.get('email')
 
-    # Verifica se já existe colaborador com esse e-mail ou matrícula
+    # Verifica se já existe colaborador com esse e-mail
     if Colaborador.query.filter_by(Email=email).first():
         flash("Este e-mail já está cadastrado.", "danger")
         return redirect(url_for('adm.cadastrar'))
 
+    # 
     if not nome or not email:
-        flash("Nome completo obrigatório.", "danger")
+        flash("Dados obrigatórios.", "danger")
         return redirect(url_for('adm.cadastrar'))
 
-    # Gera a matrícula aqui, sem depender do HTML
+    # Gera a matrícula
     ultima = Colaborador.query.order_by(Colaborador.Matricula.desc()).first()
     proxima_matricula = ultima.Matricula + 1 if ultima else 1000
 
     try:
-        senha = gerar_senha_temporaria()
+        senha = gerar_senha_temporaria() # Cria uma senha aleatória
 
         novo_colaborador = Colaborador(
             Matricula=proxima_matricula,
@@ -97,9 +104,9 @@ def salvar_cadastro():
             Email=email,
             Administrador=administrador,
             Ativo=True,
-            Nova_Senha=True,
+            Nova_Senha=True, # Para que ele precise registar nova senha no próximo registro (login ou ponto)
         )
-        novo_colaborador.set_senha(senha)
+        novo_colaborador.set_senha(senha) # Cria o hash criptografando a senha antes de salvar
 
         db.session.add(novo_colaborador)
         db.session.commit()
@@ -118,9 +125,12 @@ def salvar_cadastro():
         flash(f"Erro ao cadastrar colaborador: {str(e)}", "danger")
         return redirect(url_for('adm.cadastrar'))
 
+# Rota relatório
 @adm_blueprint.route('/adm/relatorio', methods=['GET', 'POST'])
 @login_required
 def relatorio():
+
+    # Puxando os pontos do mês atual
     pontos = []
     matricula = ''
     nome = ''
@@ -175,6 +185,7 @@ def relatorio():
         data_fim=data_fim
     )
 
+# Rota pdf puxando os dados do formulario anterior
 @adm_blueprint.route('/relatorio/pdf')
 @login_required
 def relatorio_pdf():
@@ -204,10 +215,12 @@ def relatorio_pdf():
             query = query.filter(Ponto.Data_Hora < fim)
 
     except ValueError:
-        pass  # Ou trate erro se quiser exibir algo
+        pass 
     
+    # Puxa os pontos registrados
     pontos = query.order_by(Ponto.Data_Hora.desc()).all()
 
+    # Busca o nome do colaborador, se houver matrícula
     nome_colaborador = None
     if matricula:
         colaborador = Colaborador.query.filter_by(Matricula=matricula).first()
@@ -216,15 +229,16 @@ def relatorio_pdf():
 
     data_atual = datetime.now()
 
+    # Gera o HTML para o PDF
     html = render_template("pdf.html", 
                            pontos=pontos, 
                            matricula=matricula, 
                            nome=nome_colaborador or nome,
                            data_atual=data_atual)
 
-    pdf = HTML(string=html).write_pdf()
-    html = render_template("pdf.html", pontos=pontos, data_atual=data_atual)
-    pdf = HTML(string=html, base_url=request.url_root).write_pdf()
+    # Converte para PDF
+    pdf = HTML(string=html,  base_url=request.url_root).write_pdf()
+    
     return Response(pdf, mimetype='application/pdf',
                     headers={'Content-Disposition': 'inline; filename=relatorio_pontos.pdf'})
 

@@ -1,33 +1,34 @@
-from flask import *
-from bibliotecas import *
-from adm.adm import adm_blueprint                                                           # Importando o blueprint para rotas de adm.
-from ponto.ponto import ponto_blueprint                                                     # Importando o blueprint para rotas de ponto.
-from adm.login import login_blueprint
+from flask import *                         # Importando Flask
+from bibliotecas import *                   # Importando bibliotecas necessárias
+from adm.adm import adm_blueprint           # Importando o blueprint para rotas de adm.
+from ponto.ponto import ponto_blueprint     # Importando o blueprint para rotas de ponto.
+from login.login import login_blueprint     # Importando o blueprint para rotas de login.
 
-app = Flask(__name__)
 
-app.register_blueprint(adm_blueprint)                                                           # Registrando rota adm.
-app.register_blueprint(ponto_blueprint)   
-app.register_blueprint(login_blueprint)                                                         # Registrando rota colaborador.
+app = Flask(__name__)                       # Cria a aplicação Flask
 
+app.register_blueprint(adm_blueprint)       # Registrando rota adm.
+app.register_blueprint(ponto_blueprint)     # Registrando rota ponto.                             
+app.register_blueprint(login_blueprint)     # Registrando rota login.
+
+# Configura as credenciais do servidor de e-mail (no caso é o Gmail)
 app.config.from_mapping({
-    'MAIL_SERVER': 'smtp.gmail.com',
-    'MAIL_PORT': 587,
-    'MAIL_USE_TLS': True,
-    'MAIL_USERNAME': 'kronos.sistema@gmail.com',
-    'MAIL_PASSWORD': 'waux rhgh htqf morq',
-    'MAIL_DEFAULT_SENDER': 'kronos.sistema@gmail.com'
+    'MAIL_SERVER': 'smtp.gmail.com',                    # SMTP do G-mail
+    'MAIL_PORT': 587,                                   # Porta
+    'MAIL_USE_TLS': True,                               # Criptografia ativa
+    'MAIL_USERNAME': 'kronos.sistema@gmail.com',        # Email utilizado para envio
+    'MAIL_PASSWORD': 'waux rhgh htqf morq',             # Senha, no caso utilizando senha de aplicativo do google
+    'MAIL_DEFAULT_SENDER': 'kronos.sistema@gmail.com'   # Email padrão
 })
 
-mail = Mail(app)
-
-load_dotenv()                                                                                   # Carrega variáveis do nosso arquivo .flaskenv
+mail = Mail(app)                            # Inicializa o Mail com as configurações
+load_dotenv()                               # Carrega variáveis do nosso arquivo .flaskenv
 
 dbusuario = os.getenv("DB_USERNAME")                                                            # Importando informação de usuário do arquivo env
 dbsenha = os.getenv("DB_PASSWORD")                                                              # Importando informação de senha do arquivo env
 host = os.getenv("DB_HOST")                                                                     # Importando informação de host do arquivo env
 meubanco = os.getenv("DB_DATABASE")                                                             # Importando informação de banco de dados do arquivo env
-porta = os.getenv("DB_PORT", "3306")                                                                    # importando a informação da porta da conexão do arquivo env
+porta = os.getenv("DB_PORT", "3306")                                                            # importando a informação da porta da conexão do arquivo env
 conexao = f"mysql+pymysql://{dbusuario}:{dbsenha}@{host}:{porta}/{meubanco}"                    # Formatando a linha de conexão com o banco
 app.config["SQLALCHEMY_DATABASE_URI"] = conexao                                                 # Criando uma "rota" de comunicação
 db.init_app(app)                                                                                # Sinaliza que o banco será gerenciado pelo app
