@@ -20,9 +20,7 @@ pip install flask-login
 
 # Comando para iniciar Servidor para testes:
 
-flask run --debug
-
-
+python -m flask run --debug
 
 # Comandos para salvar:
 
