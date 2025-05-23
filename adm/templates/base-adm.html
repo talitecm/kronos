@@ -43,4 +43,23 @@
 
     </footer>
 </body>
+<script>
+    let ultimoAcesso = Date.now();
+
+    // Atualiza a última interação com eventos do usuário
+    ['mousemove', 'keydown', 'click', 'scroll'].forEach(event => {
+        document.addEventListener(event, () => {
+            ultimoAcesso = Date.now();
+        });
+    });
+
+    setInterval(() => {
+        const agora = Date.now();
+        const diferencaMinutos = (agora - ultimoAcesso) / 1000 / 60;
+
+        if (diferencaMinutos >= 10) {
+            window.location.href = "{{ url_for('login.logout') }}";
+        }
+    }, 60000);  // Verifica a cada 1 min
+</script>
 </html>

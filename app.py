@@ -59,4 +59,4 @@ def internal_server_error(e):
 lm.login_view = 'login.login'
 lm.login_message = 'Acesso restrito. Faça login primeiro.'
 lm.login_message_category = 'danger'
-lm.remember_cookie_duration = timedelta(minutes=1)
+lm.remember_cookie_duration = timedelta(seconds=10)

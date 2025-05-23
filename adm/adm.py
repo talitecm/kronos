@@ -9,7 +9,7 @@ def gerar_senha_temporaria(tamanho=8):
     caracteres = string.ascii_letters + string.digits
     return ''.join(random.choices(caracteres, k=tamanho))
 
-# Rota Inicial do ADm
+# Rota Inicial do adm
 @adm_blueprint.route('/adm')
 @login_required
 def adm():

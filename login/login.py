@@ -1,5 +1,6 @@
 from bibliotecas import *           # Importando bibliotecas necessárias
 from models.tabelas import *        # importando as tabelas do banco
+from app import *
 
 # Definindo blueprint para Login
 login_blueprint = Blueprint('login', __name__, template_folder='templates')
@@ -46,7 +47,7 @@ def login():
                 return redirect(url_for('login.nova_senha'))  # Redireciona para troca de senha
 
             # Se tudo certo: login e redireciona para a pagina de adm
-            login_user(colaborador)
+            login_user(colaborador, remember=True)
             return redirect(url_for("adm.adm"))
 
     return render_template('login.html')
