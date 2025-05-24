@@ -105,7 +105,7 @@ body, html {
 a.link-login {
     display: inline-block;
     margin-top: 10px;
-    color: #4da3ff; /* Azul claro */
+    color: #4da3ff;
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
@@ -113,8 +113,8 @@ a.link-login {
   }
   
   a.link-login:hover {
-    color: #78c2ff; /* Azul mais claro ao passar o mouse */
-    text-shadow: 0 0 5px rgba(120, 194, 255, 0.6); /* Brilho leve */
+    color: #78c2ff;
+    text-shadow: 0 0 5px rgba(120, 194, 255, 0.6);
   }  
 
 .button-container {
@@ -231,7 +231,7 @@ body {
     }
 
     .painel-esq {
-        display: none; /* Esconde painel lateral em telas pequenas */
+        display: none;
     }
 
     .login-form input,

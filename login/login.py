@@ -1,6 +1,5 @@
 from bibliotecas import *           # Importando bibliotecas necessárias
 from models.tabelas import *        # importando as tabelas do banco
-from app import *
 
 # Definindo blueprint para Login
 login_blueprint = Blueprint('login', __name__, template_folder='templates')

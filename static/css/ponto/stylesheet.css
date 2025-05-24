@@ -75,7 +75,7 @@ html {
     max-width: 400px;
     text-align: center;
     z-index: 1000;
-    pointer-events: none; /* Permite que cliques passem por cima */
+    pointer-events: none;
 }
 
 .alert {
@@ -87,7 +87,7 @@ html {
     font-size: 0.9rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     animation: fadeSlideDown 0.5s ease forwards;
-    pointer-events: auto; /* Permite interações com o alerta */
+    pointer-events: auto;
 }
 
 .box-ponto {
