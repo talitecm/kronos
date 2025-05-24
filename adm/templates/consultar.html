@@ -34,9 +34,33 @@
             <button type="button">Relatório em PDF</button>
         </a>
         <a href="{{ url_for('adm.editar', matricula=colaborador.Matricula) }}" class="botao-base"><button type="button">Editar</button></a>
+        <a href="{{ url_for('adm.consultar') }}" class="link-login">
+            <button type="button">Voltar</button>
+        </a>
         {% endif %}                      
         <button type="submit">Consultar</button>
     </div>
+    <table class="tabela-colaboradores">
+        <thead>
+            {% if colaboradores %}
+            <tr>
+                <th>Matrícula</th>
+                <th>Nome</th>
+            </tr>
+            {% endif %}
+        </thead>
+        <tbody>
+            {% for c in colaboradores %}
+                <tr>
+                    <td>{{ c.Matricula }}</td>
+                    <td class="nome-colaboradores">{{ c.Nome }}</td>
+                    <td>
+                        <a href="{{ url_for('adm.editar', matricula=c.Matricula) }}" class="botao-base"><button type="button" class="btn-colaboradores">Editar</button></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </form>
 
 {% endblock %}

@@ -32,8 +32,9 @@ def consultar():
             return redirect(url_for('adm.consultar'))
 
         return render_template('consultar.html', colaborador=colaborador)
-
-    return render_template('consultar.html')
+    
+    colaboradores = Colaborador.query.all()    
+    return render_template('consultar.html', colaboradores=colaboradores)
 
 # Rota para editar colaborador consultado
 @adm_blueprint.route('/adm/editar/<matricula>', methods=['GET', 'POST'])

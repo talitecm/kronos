@@ -174,7 +174,7 @@ select {
 }
 
 button[type="submit"],
-button[type="button"]{
+button[type="button"], button[class="btn-colaboradores"]{
     background-color: #1e81b0;
     border: none;
     color: white;
@@ -222,6 +222,11 @@ button[type="button"]:hover {
     height: auto;
     margin-right: 4px;
     vertical-align: middle;
+}
+
+.nome-colaboradores {
+    text-align: center;
+    width: 500px;
 }
 
 /* Estilo para telas menores */
@@ -289,6 +294,11 @@ button[type="button"]:hover {
         padding: 10px 5rem;
         max-width: 100%;
     }
+
+    button[class="btn-colaboradores"]{
+        padding: 10px 1rem;
+    }
+
     .form-group {
         min-width: 100%; /* Ocupa toda a largura disponível */
         max-width: 100%;
